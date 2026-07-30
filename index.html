@@ -37,7 +37,6 @@
     padding:24px 16px;
   }
 
-  /* ambient floating hearts */
   .floaties{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
   .floaties span{
     position:absolute; bottom:-10%; font-size:20px; opacity:0.25;
@@ -74,7 +73,6 @@
   }
   .eyebrow b{ color:var(--rose-deep); font-weight:700; }
 
-  /* stage rail = the ticket's own numbering, justified: it's a real 4-step sequence */
   .rail{ display:flex; gap:6px; margin-bottom:22px; }
   .rail i{
     flex:1;
@@ -172,7 +170,6 @@
 
   .next-btn{ width:100%; margin-top:4px; }
 
-  /* setup / loading / error */
   .center-msg{ text-align:center; padding:10px 0; color:var(--ink-soft); font-size:14px; line-height:2; }
   code{
     display:block;
@@ -188,7 +185,6 @@
     color:var(--ink);
   }
 
-  /* ticket view (owner sees answers) */
   .ticket{ position:relative; }
   .ticket .divider{
     position:relative;
@@ -245,7 +241,6 @@
     padding:6px;
   }
 
-  /* confetti hearts on submit */
   .confetti{ position:fixed; inset:0; pointer-events:none; z-index:5; }
   .confetti span{
     position:absolute; top:-5%; font-size:18px;
@@ -271,13 +266,19 @@
 
 <script>
 /* ============================================================
-   یک‌بار تنظیم: بعد از اولین اجرا، یک شناسه‌ی ذخیره‌سازی این‌جا
-   ساخته می‌شود. آن را کپی کن و به‌جای رشته‌ی خالی زیر بگذار،
-   بعد فایل را دوباره در گیت‌هاب ذخیره کن تا هر دو نفر یک
-   پاسخ مشترک ببینید.
+   تنظیمات ثابت — این دو مقدار دیگه هیچ‌وقت خودکار عوض نمی‌شن.
+
+   JSONBIN_BIN_ID: آی‌دی همون بینی که از قبل روی jsonbin.io ساخته
+   شده. ثابته و این کد دیگه هیچ‌وقت بین جدید نمی‌سازه.
+
+   JSONBIN_ACCESS_KEY: به‌جای Master Key (که به کل حسابت دسترسی
+   داره)، از یه Access Key محدود استفاده می‌کنیم که توی داشبورد
+   jsonbin.io فقط برای همین یک بین، فقط با اجازه‌ی Read و Update
+   ساخته می‌شه. یعنی حتی اگه این کلید لو بره، فقط همین یک بین در
+   خطره، نه کل حسابت.
    ============================================================ */
-const JSONBIN_MASTER_KEY = "$2a$10$YdZ4PLEMboG/IXb62cg4gu0A5a1nQ8qKyGACrAhT6XyclP1Ai5Zvq"; // <-- کلید X-MASTER-KEY از حساب رایگان jsonbin.io رو این‌جا بذار
-const JSONBIN_BIN_ID = "JDLVZbEZyY2ertpCaTomtM"; // <-- بعد از اولین اجرا با کلید بالا، یه آی‌دی ساخته می‌شه؛ اون رو این‌جا بذار
+const JSONBIN_BIN_ID = "BJuKJMZT6tyb5qsULiDj7c";
+const JSONBIN_ACCESS_KEY = "$2a$10$MRmf5MXhxlBBqlMXVf4S6uq1HOm4UeVpjIdsJON.7M4.ZvwCtpiY.";
 
 const card = document.getElementById('card');
 
@@ -314,7 +315,7 @@ floatHearts();
 
 async function jbGet(binId){
   const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY },
+    headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY },
     cache:'no-store'
   });
   if(!res.ok) throw new Error('read-failed');
@@ -324,47 +325,22 @@ async function jbGet(binId){
 async function jbSet(binId, data){
   const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
     method:'PUT',
-    headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
+    headers: { 'Content-Type':'application/json', 'X-Access-Key': JSONBIN_ACCESS_KEY },
     body: JSON.stringify(data)
   });
   if(!res.ok) throw new Error('write-failed');
 }
-async function jbCreate(data){
-  const res = await fetch('https://api.jsonbin.io/v3/b', {
-    method:'POST',
-    headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
-    body: JSON.stringify(data)
-  });
-  if(!res.ok) throw new Error('create-failed');
-  const json = await res.json();
-  return json.metadata.id;
-}
 
-function renderNeedMasterKey(){
+function renderNeedAccessKey(){
   card.innerHTML = `
     <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
     <div class="emoji">🔑</div>
     <h1>یک قدم مونده</h1>
-    <p class="sub">اول یه حساب رایگان توی
-      <a href="https://jsonbin.io" target="_blank" style="color:var(--rose-deep)">jsonbin.io</a>
-      بساز، بعد از بخش API Keys کلید X-MASTER-KEY رو کپی کن و
-      توی فایل index.html جای مقدار زیر بذارش:</p>
-    <code>const JSONBIN_MASTER_KEY = "کلید_تو_اینجا";</code>
-    <div class="center-msg">بعدش دوباره فایل رو توی گیت‌هاب ذخیره کن و همین صفحه رو رفرش کن.</div>
-  `;
-}
-
-function renderSetup(binId){
-  card.innerHTML = `
-    <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
-    <div class="emoji">🛠️</div>
-    <h1>یک قدم دیگه مونده</h1>
-    <p class="sub">این آی‌دی رو کپی کن و توی فایل index.html، جای مقدار
-      <code style="display:inline;padding:2px 6px;">JSONBIN_BIN_ID</code>
-      بذارش، بعد فایل رو دوباره توی گیت‌هاب ذخیره کن. از این به بعد
-      هر دوی شما یک پاسخ مشترک می‌بینید.</p>
-    <code>const JSONBIN_BIN_ID = "${binId}";</code>
-    <div class="center-msg">تا وقتی این کار رو نکنی، سایت هر بار یه آی‌دی تازه می‌سازه.</div>
+    <p class="sub">وارد حساب jsonbin.io شو، از بخش API Keys یه
+      <b>Access Key</b> فقط برای همین یک بین بساز (با اجازه‌ی
+      Read و Update)، بعد مقدارش رو جای متن زیر توی فایل index.html
+      بذار و دوباره توی گیت‌هاب ذخیره کن:</p>
+    <code>const JSONBIN_ACCESS_KEY = "کلیدت_اینجا";</code>
   `;
 }
 
@@ -538,24 +514,13 @@ async function resetFlow(){
 }
 
 async function boot(){
-  if(!JSONBIN_MASTER_KEY){
-    renderNeedMasterKey();
-    return;
-  }
-  if(!JSONBIN_BIN_ID){
-    try{
-      const id = await jbCreate({ status:'pending', answers:null });
-      renderSetup(id);
-    }catch(e){
-      renderError('نشد ارتباط اولیه برقرار بشه. کلید رو چک کن و دوباره امتحان کن.');
-    }
+  if(!JSONBIN_ACCESS_KEY || JSONBIN_ACCESS_KEY.indexOf('اینجا') !== -1){
+    renderNeedAccessKey();
     return;
   }
   try{
     const data = await jbGet(JSONBIN_BIN_ID);
-    if(data && data.status === 'done'){
-      renderTicket(data);
-    } else if(data && data.status === 'not-yet'){
+    if(data && (data.status === 'done' || data.status === 'not-yet')){
       renderTicket(data);
     } else {
       step = 0;
