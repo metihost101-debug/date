@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دیت 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #fdf1ea;
+    --paper-2: #fffaf6;
+    --ink: #4a1942;
+    --ink-soft: #7a4a6e;
+    --rose: #e2637f;
+    --rose-deep: #c94e6b;
+    --gold: #e3a857;
+    --line: #f0d3c4;
+    --shadow: 0 20px 45px -20px rgba(74,25,66,0.35);
+  }
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Vazirmatn', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 20%, rgba(226,99,127,0.12), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(227,168,87,0.14), transparent 45%),
+      var(--paper);
+    position:relative;
+    overflow-x:hidden;
+    padding:24px 16px;
+  }
+
+  /* ambient floating hearts */
+  .floaties{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .floaties span{
+    position:absolute; bottom:-10%; font-size:20px; opacity:0.25;
+    animation: rise linear infinite;
+    color:var(--rose);
+  }
+  @keyframes rise{
+    0%{ transform: translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.3; }
+    90%{ opacity:0.2; }
+    100%{ transform: translateY(-115vh) rotate(25deg); opacity:0; }
+  }
+
+  .card{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:420px;
+    background:var(--paper-2);
+    border-radius:28px;
+    box-shadow:var(--shadow);
+    padding:30px 26px 26px;
+    border:1px solid var(--line);
+  }
+
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .eyebrow b{ color:var(--rose-deep); font-weight:700; }
+
+  /* stage rail = the ticket's own numbering, justified: it's a real 4-step sequence */
+  .rail{ display:flex; gap:6px; margin-bottom:22px; }
+  .rail i{
+    flex:1;
+    height:6px;
+    border-radius:5px;
+    background:var(--line);
+    overflow:hidden;
+    position:relative;
+  }
+  .rail i b{
+    position:absolute; inset:0;
+    background:linear-gradient(90deg,var(--rose),var(--gold));
+    transform:scaleX(0);
+    transform-origin: right;
+    transition: transform .5s ease;
+    display:block;
+  }
+  .rail i.done b, .rail i.active b{ transform:scaleX(1); }
+
+  .stage{ display:none; text-align:center; animation: fadeIn .45s ease; }
+  .stage.active{ display:block; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .emoji{ font-size:44px; margin-bottom:6px; }
+  h1{
+    font-family:'Lalezar', 'Vazirmatn', sans-serif;
+    font-weight:400;
+    font-size:28px;
+    margin:6px 0 4px;
+    color:var(--ink);
+  }
+  p.sub{ margin:0 0 20px; color:var(--ink-soft); font-size:14.5px; line-height:1.9; }
+
+  .btn-row{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .btn-row.two{ flex-direction:row; }
+
+  button{
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+    border:none;
+    border-radius:16px;
+    padding:14px 16px;
+    cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  button:active{ transform:scale(0.97); }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff;
+    box-shadow:0 10px 24px -10px rgba(201,78,107,0.6);
+    flex:1.4;
+  }
+  .btn-ghost{
+    background:var(--paper);
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    flex:1;
+  }
+  .btn-ghost:hover{ color:var(--ink); }
+
+  .field{ text-align:right; margin-bottom:18px; }
+  .field label{ display:block; font-size:13.5px; color:var(--ink-soft); margin-bottom:8px; }
+  input[type="date"], input[type="time"], input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:15px;
+    padding:12px 14px;
+    border-radius:14px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    outline:none;
+  }
+  input:focus{ border-color:var(--rose); }
+  .row2{ display:flex; gap:10px; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; justify-content:center; }
+  .chip{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    color:var(--ink);
+    border-radius:999px;
+    padding:9px 14px;
+    font-size:14px;
+    cursor:pointer;
+    font-family:inherit;
+    transition: all .15s ease;
+  }
+  .chip.sel{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .next-btn{ width:100%; margin-top:4px; }
+
+  /* setup / loading / error */
+  .center-msg{ text-align:center; padding:10px 0; color:var(--ink-soft); font-size:14px; line-height:2; }
+  code{
+    display:block;
+    direction:ltr;
+    text-align:left;
+    background:var(--paper);
+    border:1.5px dashed var(--line);
+    border-radius:12px;
+    padding:12px;
+    font-size:13px;
+    margin:12px 0;
+    word-break:break-all;
+    color:var(--ink);
+  }
+
+  /* ticket view (owner sees answers) */
+  .ticket{ position:relative; }
+  .ticket .divider{
+    position:relative;
+    height:0;
+    border-top:2px dashed var(--line);
+    margin:18px -26px;
+  }
+  .ticket .divider::before, .ticket .divider::after{
+    content:"";
+    position:absolute;
+    top:-11px;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:var(--paper);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ticket .divider::before{ right:-11px; }
+  .ticket .divider::after{ left:-11px; }
+
+  .answer{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:9px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14.5px;
+  }
+  .answer:last-child{ border-bottom:none; }
+  .answer .k{ color:var(--ink-soft); }
+  .answer .v{ font-weight:700; color:var(--rose-deep); }
+
+  .status-pill{
+    display:inline-block;
+    background:linear-gradient(135deg,var(--gold),var(--rose));
+    color:#fff;
+    padding:6px 16px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:16px;
+  }
+
+  .reset-link{
+    display:block;
+    text-align:center;
+    margin-top:18px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-decoration:underline;
+    cursor:pointer;
+    background:none;
+    border:none;
+    width:100%;
+    padding:6px;
+  }
+
+  /* confetti hearts on submit */
+  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:5; }
+  .confetti span{
+    position:absolute; top:-5%; font-size:18px;
+    animation: fall 2.6s ease-in forwards;
+  }
+  @keyframes fall{
+    to{ transform: translateY(110vh) rotate(180deg); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .floaties, .confetti{ display:none; }
+    .stage{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="floaties" id="floaties"></div>
+
+<div class="card" id="card">
+  <div class="center-msg">در حال بارگذاری… 💗</div>
+</div>
+
+<script>
+/* ============================================================
+   یک‌بار تنظیم: بعد از اولین اجرا، یک شناسه‌ی ذخیره‌سازی این‌جا
+   ساخته می‌شود. آن را کپی کن و به‌جای رشته‌ی خالی زیر بگذار،
+   بعد فایل را دوباره در گیت‌هاب ذخیره کن تا هر دو نفر یک
+   پاسخ مشترک ببینید.
+   ============================================================ */
+const KVDB_BUCKET = ""; // <-- بعد از مرحله‌ی اول، آی‌دی رو این‌جا بچسبون
+const KEY = "date-answers";
+
+const card = document.getElementById('card');
+
+const STEPS = [
+  { key:'goDate', title:'بریم دیت؟', emoji:'💌',
+    sub:'یه سوال ساده قبل از هر برنامه‌ای...' },
+  { key:'when', title:'کِی بریم؟', emoji:'🗓️',
+    sub:'تاریخ و ساعتی که برات خوبه رو انتخاب کن.' },
+  { key:'where', title:'کجا بریم؟', emoji:'📍',
+    sub:'یکی رو انتخاب کن یا خودت یه‌جا پیشنهاد بده.',
+    chips:['کافه ☕','رستوران 🍽️','سینما 🎬','پارک 🌳','غافلگیرم کن ✨'] },
+  { key:'what', title:'چی بخوریم؟', emoji:'🍰',
+    sub:'دهنمون آب افتاد… بگو چی میل داری.',
+    chips:['پیتزا 🍕','سوشی 🍣','کباب 🍢','برگر 🍔','هرچی تو دوست داری 💗'] },
+];
+
+let step = 0;
+let answers = {};
+
+function floatHearts(){
+  const wrap = document.getElementById('floaties');
+  const hearts = ['💗','💖','💕','✨'];
+  for(let i=0;i<10;i++){
+    const s = document.createElement('span');
+    s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.animationDuration = (10+Math.random()*10)+'s';
+    s.style.animationDelay = (Math.random()*10)+'s';
+    s.style.fontSize = (14+Math.random()*14)+'px';
+    wrap.appendChild(s);
+  }
+}
+floatHearts();
+
+async function kvGet(bucket){
+  const res = await fetch(`https://kvdb.io/${bucket}/${KEY}`, { cache:'no-store' });
+  if(res.status === 404) return null;
+  if(!res.ok) throw new Error('read-failed');
+  const txt = await res.text();
+  try{ return JSON.parse(txt); } catch(e){ return null; }
+}
+async function kvSet(bucket, data){
+  const res = await fetch(`https://kvdb.io/${bucket}/${KEY}`, {
+    method:'PUT',
+    body: JSON.stringify(data)
+  });
+  if(!res.ok) throw new Error('write-failed');
+}
+async function createBucket(){
+  const res = await fetch('https://kvdb.io/', { method:'POST' });
+  const id = (await res.text()).trim();
+  return id;
+}
+
+function renderSetup(bucketId){
+  card.innerHTML = `
+    <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
+    <div class="emoji">🛠️</div>
+    <h1>یک قدم مونده</h1>
+    <p class="sub">این آی‌دی رو کپی کن و توی فایل index.html، جای مقدار
+      <code style="display:inline;padding:2px 6px;">KVDB_BUCKET</code>
+      بذارش، بعد فایل رو دوباره توی گیت‌هاب ذخیره کن. از این به بعد
+      هر دوی شما یک پاسخ مشترک می‌بینید.</p>
+    <code>const KVDB_BUCKET = "${bucketId}";</code>
+    <div class="center-msg">تا وقتی این کار رو نکنی، سایت هر بار یه آی‌دی تازه می‌سازه.</div>
+  `;
+}
+
+function renderError(msg){
+  card.innerHTML = `
+    <div class="emoji">😕</div>
+    <h1>یه مشکلی پیش اومد</h1>
+    <p class="sub">${msg}</p>
+    <button class="btn-primary" style="width:100%" onclick="location.reload()">امتحان دوباره</button>
+  `;
+}
+
+function railHTML(activeIndex){
+  return STEPS.map((_,i)=>{
+    const cls = i < activeIndex ? 'done' : (i===activeIndex ? 'active' : '');
+    return `<i><b class="${cls}"></b></i>`;
+  }).join('');
+}
+
+function renderStep(){
+  const s = STEPS[step];
+  let body = '';
+
+  if(s.key === 'goDate'){
+    body = `
+      <div class="btn-row two">
+        <button class="btn-primary" onclick="answerGoDate(true)">بله 😍</button>
+        <button class="btn-ghost" onclick="answerGoDate(false)">بذار بعد بگم</button>
+      </div>`;
+  } else if(s.key === 'when'){
+    body = `
+      <div class="field">
+        <label>تاریخ</label>
+        <input type="date" id="inp-date">
+      </div>
+      <div class="field">
+        <label>ساعت</label>
+        <input type="time" id="inp-time">
+      </div>
+      <button class="btn-primary next-btn" onclick="answerWhen()">بعدی</button>`;
+  } else if(s.key === 'where' || s.key === 'what'){
+    const chips = s.chips.map(c=>`<button type="button" class="chip" data-val="${c}" onclick="toggleChip(this)">${c}</button>`).join('');
+    body = `
+      <div class="chips">${chips}</div>
+      <div class="field">
+        <label>یا خودت بنویس</label>
+        <input type="text" id="inp-custom" placeholder="مثلاً یه جای خاص که تو ذهنته...">
+      </div>
+      <button class="btn-primary next-btn" onclick="answerChip('${s.key}')">${step === STEPS.length-1 ? 'ثبت نهایی 💌' : 'بعدی'}</button>`;
+  }
+
+  card.innerHTML = `
+    <div class="eyebrow"><span>مرحله ${step+1} از ${STEPS.length}</span><b>دیت 💌</b></div>
+    <div class="rail">${railHTML(step)}</div>
+    <div class="stage active">
+      <div class="emoji">${s.emoji}</div>
+      <h1>${s.title}</h1>
+      <p class="sub">${s.sub}</p>
+      ${body}
+    </div>
+  `;
+}
+
+function toggleChip(btn){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('inp-custom').value = '';
+}
+
+async function answerGoDate(yes){
+  answers.goDate = yes ? 'بله 😍' : 'فعلاً نه';
+  if(!yes){
+    await saveAndShow({ status:'not-yet', answers });
+    card.innerHTML = `
+      <div class="emoji">💭</div>
+      <h1>باشه، عجله‌ای نیست</h1>
+      <p class="sub">هروقت آماده بودی، دوباره سر بزن و بگو «بله» 💗</p>`;
+    return;
+  }
+  step = 1;
+  renderStep();
+}
+
+async function answerWhen(){
+  const d = document.getElementById('inp-date').value;
+  const t = document.getElementById('inp-time').value;
+  if(!d || !t){
+    document.getElementById('inp-date').style.borderColor = 'var(--rose)';
+    document.getElementById('inp-time').style.borderColor = 'var(--rose)';
+    return;
+  }
+  answers.when = `${d} - ${t}`;
+  step = 2;
+  renderStep();
+}
+
+async function answerChip(key){
+  const selected = document.querySelector('.chip.sel');
+  const custom = document.getElementById('inp-custom').value.trim();
+  const val = custom || (selected ? selected.dataset.val : '');
+  if(!val){
+    document.getElementById('inp-custom').style.borderColor = 'var(--rose)';
+    return;
+  }
+  answers[key] = val;
+
+  if(step === STEPS.length - 1){
+    await saveAndShow({ status:'done', answers });
+    showThankYou();
+  } else {
+    step++;
+    renderStep();
+  }
+}
+
+function showThankYou(){
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti';
+  document.body.appendChild(wrap);
+  const hearts = ['💗','💖','💕','🎉','✨'];
+  for(let i=0;i<26;i++){
+    const s = document.createElement('span');
+    s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*0.8)+'s';
+    wrap.appendChild(s);
+  }
+  card.innerHTML = `
+    <div class="emoji">🎉</div>
+    <h1>ثبت شد!</h1>
+    <p class="sub">مرسی که وقت گذاشتی. حالا فقط باید منتظر روزی باشیم
+      که برنامه‌مون بشه واقعیت 💗</p>`;
+}
+
+function renderTicket(data){
+  const a = data.answers || {};
+  const pillText = data.status === 'done' ? 'قرار ثبت شده! 🎉' : 'هنوز منتظر جوابه…';
+  card.innerHTML = `
+    <div class="eyebrow"><span>خلاصه‌ی قرار</span><b>دیت 💌</b></div>
+    <div class="ticket">
+      <div style="text-align:center">
+        <span class="status-pill">${pillText}</span>
+      </div>
+      <div class="answer"><span class="k">میاد؟</span><span class="v">${a.goDate || '—'}</span></div>
+      <div class="divider"></div>
+      <div class="answer"><span class="k">کِی</span><span class="v">${a.when || '—'}</span></div>
+      <div class="answer"><span class="k">کجا</span><span class="v">${a.where || '—'}</span></div>
+      <div class="answer"><span class="k">چی بخوریم</span><span class="v">${a.what || '—'}</span></div>
+    </div>
+    <button class="reset-link" onclick="resetFlow()">پاک کردن و شروع دوباره</button>
+  `;
+}
+
+async function saveAndShow(data){
+  try{
+    await kvSet(KVDB_BUCKET, data);
+  }catch(e){
+    renderError('پاسخ ثبت نشد. اتصال اینترنت رو چک کن و دوباره امتحان کن.');
+    throw e;
+  }
+}
+
+async function resetFlow(){
+  if(!confirm('مطمئنی می‌خوای همه‌چیز پاک بشه؟')) return;
+  answers = {};
+  step = 0;
+  try{
+    await kvSet(KVDB_BUCKET, { status:'pending', answers:null });
+  }catch(e){}
+  renderStep();
+}
+
+async function boot(){
+  if(!KVDB_BUCKET){
+    try{
+      const id = await createBucket();
+      renderSetup(id);
+    }catch(e){
+      renderError('نشد ارتباط اولیه برقرار بشه. صفحه رو رفرش کن و دوباره امتحان کن.');
+    }
+    return;
+  }
+  try{
+    const data = await kvGet(KVDB_BUCKET);
+    if(data && data.status === 'done'){
+      renderTicket(data);
+    } else if(data && data.status === 'not-yet'){
+      renderTicket(data);
+    } else {
+      step = 0;
+      renderStep();
+    }
+  }catch(e){
+    renderError('نشد اطلاعات رو بخونیم. اتصال اینترنت رو چک کن و دوباره امتحان کن.');
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
