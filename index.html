@@ -327,7 +327,7 @@ async function kvSet(bucket, data){
   if(!res.ok) throw new Error('write-failed');
 }
 async function createBucket(){
-  const res = await fetch('https://kvdb.io/', { method:'POST' });
+  const res = await fetch('https://kvdb.io/?email=metihost101%40gmail.com', { method:'POST' });
   const id = (await res.text()).trim();
   return id;
 }
