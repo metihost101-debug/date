@@ -276,8 +276,8 @@
    بعد فایل را دوباره در گیت‌هاب ذخیره کن تا هر دو نفر یک
    پاسخ مشترک ببینید.
    ============================================================ */
-const KVDB_BUCKET = ""; // <-- بعد از مرحله‌ی اول، آی‌دی رو این‌جا بچسبون
-const KEY = "date-answers";
+const JSONBIN_MASTER_KEY = "$2a$10$YdZ4PLEMboG/IXb62cg4gu0A5a1nQ8qKyGACrAhT6XyclP1Ai5Zvq"; // <-- کلید X-MASTER-KEY از حساب رایگان jsonbin.io رو این‌جا بذار
+const JSONBIN_BIN_ID = ""; // <-- بعد از اولین اجرا با کلید بالا، یه آی‌دی ساخته می‌شه؛ اون رو این‌جا بذار
 
 const card = document.getElementById('card');
 
@@ -312,40 +312,58 @@ function floatHearts(){
 }
 floatHearts();
 
-async function kvGet(bucket){
-  const res = await fetch(`https://kvdb.io/${bucket}/${KEY}`, { cache:'no-store' });
-  if(res.status === 404) return null;
+async function jbGet(binId){
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY },
+    cache:'no-store'
+  });
   if(!res.ok) throw new Error('read-failed');
-  const txt = await res.text();
-  try{ return JSON.parse(txt); } catch(e){ return null; }
+  const json = await res.json();
+  return json.record;
 }
-async function kvSet(bucket, data){
-  const res = await fetch(`https://kvdb.io/${bucket}/${KEY}`, {
+async function jbSet(binId, data){
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
     method:'PUT',
+    headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
     body: JSON.stringify(data)
   });
   if(!res.ok) throw new Error('write-failed');
 }
-async function createBucket(){
-  const res = await fetch('https://kvdb.io/', {
+async function jbCreate(data){
+  const res = await fetch('https://api.jsonbin.io/v3/b', {
     method:'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'email=metihost101%40gmail.com'
+    headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
+    body: JSON.stringify(data)
   });
-  const id = (await res.text()).trim();
-  return id;
+  if(!res.ok) throw new Error('create-failed');
+  const json = await res.json();
+  return json.metadata.id;
 }
 
-function renderSetup(bucketId){
+function renderNeedMasterKey(){
+  card.innerHTML = `
+    <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
+    <div class="emoji">🔑</div>
+    <h1>یک قدم مونده</h1>
+    <p class="sub">اول یه حساب رایگان توی
+      <a href="https://jsonbin.io" target="_blank" style="color:var(--rose-deep)">jsonbin.io</a>
+      بساز، بعد از بخش API Keys کلید X-MASTER-KEY رو کپی کن و
+      توی فایل index.html جای مقدار زیر بذارش:</p>
+    <code>const JSONBIN_MASTER_KEY = "کلید_تو_اینجا";</code>
+    <div class="center-msg">بعدش دوباره فایل رو توی گیت‌هاب ذخیره کن و همین صفحه رو رفرش کن.</div>
+  `;
+}
+
+function renderSetup(binId){
   card.innerHTML = `
     <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
     <div class="emoji">🛠️</div>
-    <h1>یک قدم مونده</h1>
+    <h1>یک قدم دیگه مونده</h1>
     <p class="sub">این آی‌دی رو کپی کن و توی فایل index.html، جای مقدار
-      <code style="display:inline;padding:2px 6px;">KVDB_BUCKET</code>
+      <code style="display:inline;padding:2px 6px;">JSONBIN_BIN_ID</code>
       بذارش، بعد فایل رو دوباره توی گیت‌هاب ذخیره کن. از این به بعد
       هر دوی شما یک پاسخ مشترک می‌بینید.</p>
-    <code>const KVDB_BUCKET = "${bucketId}";</code>
+    <code>const JSONBIN_BIN_ID = "${binId}";</code>
     <div class="center-msg">تا وقتی این کار رو نکنی، سایت هر بار یه آی‌دی تازه می‌سازه.</div>
   `;
 }
@@ -502,7 +520,7 @@ function renderTicket(data){
 
 async function saveAndShow(data){
   try{
-    await kvSet(KVDB_BUCKET, data);
+    await jbSet(JSONBIN_BIN_ID, data);
   }catch(e){
     renderError('پاسخ ثبت نشد. اتصال اینترنت رو چک کن و دوباره امتحان کن.');
     throw e;
@@ -514,23 +532,27 @@ async function resetFlow(){
   answers = {};
   step = 0;
   try{
-    await kvSet(KVDB_BUCKET, { status:'pending', answers:null });
+    await jbSet(JSONBIN_BIN_ID, { status:'pending', answers:null });
   }catch(e){}
   renderStep();
 }
 
 async function boot(){
-  if(!KVDB_BUCKET){
+  if(!JSONBIN_MASTER_KEY){
+    renderNeedMasterKey();
+    return;
+  }
+  if(!JSONBIN_BIN_ID){
     try{
-      const id = await createBucket();
+      const id = await jbCreate({ status:'pending', answers:null });
       renderSetup(id);
     }catch(e){
-      renderError('نشد ارتباط اولیه برقرار بشه. صفحه رو رفرش کن و دوباره امتحان کن.');
+      renderError('نشد ارتباط اولیه برقرار بشه. کلید رو چک کن و دوباره امتحان کن.');
     }
     return;
   }
   try{
-    const data = await kvGet(KVDB_BUCKET);
+    const data = await jbGet(JSONBIN_BIN_ID);
     if(data && data.status === 'done'){
       renderTicket(data);
     } else if(data && data.status === 'not-yet'){
