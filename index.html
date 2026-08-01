@@ -3,535 +3,320 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دیت 💌</title>
+<title>یه دیت؟</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #fdf1ea;
-    --paper-2: #fffaf6;
-    --ink: #4a1942;
-    --ink-soft: #7a4a6e;
-    --rose: #e2637f;
-    --rose-deep: #c94e6b;
-    --gold: #e3a857;
-    --line: #f0d3c4;
-    --shadow: 0 20px 45px -20px rgba(74,25,66,0.35);
+    --plum-950:#221421;
+    --plum-900:#2c1a2b;
+    --plum-800:#3c2339;
+    --rose-300:#e9b4c0;
+    --rose-500:#d3667f;
+    --gold-400:#d8ab5c;
+    --cream-100:#f6ece1;
+    --cream-200:#ecdfce;
   }
-  *{ box-sizing: border-box; }
-  html,body{ height:100%; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
   body{
-    margin:0;
     min-height:100vh;
+    background:
+      radial-gradient(1200px 700px at 15% 10%, rgba(216,171,92,.10), transparent 60%),
+      radial-gradient(1000px 700px at 85% 90%, rgba(211,102,127,.14), transparent 60%),
+      linear-gradient(160deg, var(--plum-950), var(--plum-900) 55%, var(--plum-800));
+    font-family:'Vazirmatn', sans-serif;
+    color:var(--cream-100);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-family:'Vazirmatn', sans-serif;
-    color:var(--ink);
-    background:
-      radial-gradient(circle at 15% 20%, rgba(226,99,127,0.12), transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(227,168,87,0.14), transparent 45%),
-      var(--paper);
-    position:relative;
-    overflow-x:hidden;
-    padding:24px 16px;
+    padding:24px;
   }
-
-  .floaties{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-  .floaties span{
-    position:absolute; bottom:-10%; font-size:20px; opacity:0.25;
-    animation: rise linear infinite;
-    color:var(--rose);
-  }
-  @keyframes rise{
-    0%{ transform: translateY(0) rotate(0deg); opacity:0; }
-    10%{ opacity:0.3; }
-    90%{ opacity:0.2; }
-    100%{ transform: translateY(-115vh) rotate(25deg); opacity:0; }
-  }
-
   .card{
-    position:relative;
-    z-index:1;
     width:100%;
-    max-width:420px;
-    background:var(--paper-2);
+    max-width:480px;
+    background:rgba(246,236,225,.04);
+    border:1px solid rgba(233,180,192,.18);
     border-radius:28px;
-    box-shadow:var(--shadow);
-    padding:30px 26px 26px;
-    border:1px solid var(--line);
+    padding:44px 32px;
+    backdrop-filter:blur(6px);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.5);
+    text-align:center;
+    position:relative;
+    overflow:hidden;
   }
+  .petals{
+    display:flex; justify-content:center; gap:8px; margin-bottom:22px;
+  }
+  .petal{
+    width:10px;height:10px;border-radius:50%;
+    background:rgba(246,236,225,.15);
+    transition:all .4s ease;
+  }
+  .petal.on{background:var(--rose-500); box-shadow:0 0 12px rgba(211,102,127,.7); transform:scale(1.3);}
 
   .eyebrow{
-    font-size:13px;
-    letter-spacing:0.5px;
-    color:var(--ink-soft);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:14px;
+    font-size:13px; letter-spacing:.14em; color:var(--gold-400);
+    font-weight:600; margin-bottom:10px; text-transform:none;
   }
-  .eyebrow b{ color:var(--rose-deep); font-weight:700; }
-
-  .rail{ display:flex; gap:6px; margin-bottom:22px; }
-  .rail i{
-    flex:1;
-    height:6px;
-    border-radius:5px;
-    background:var(--line);
-    overflow:hidden;
-    position:relative;
-  }
-  .rail i b{
-    position:absolute; inset:0;
-    background:linear-gradient(90deg,var(--rose),var(--gold));
-    transform:scaleX(0);
-    transform-origin: right;
-    transition: transform .5s ease;
-    display:block;
-  }
-  .rail i.done b, .rail i.active b{ transform:scaleX(1); }
-
-  .stage{ display:none; text-align:center; animation: fadeIn .45s ease; }
-  .stage.active{ display:block; }
-  @keyframes fadeIn{ from{ opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-
-  .emoji{ font-size:44px; margin-bottom:6px; }
   h1{
-    font-family:'Lalezar', 'Vazirmatn', sans-serif;
-    font-weight:400;
-    font-size:28px;
-    margin:6px 0 4px;
-    color:var(--ink);
+    font-size:26px; font-weight:800; margin:0 0 14px; line-height:1.5;
+    color:var(--cream-100);
   }
-  p.sub{ margin:0 0 20px; color:var(--ink-soft); font-size:14.5px; line-height:1.9; }
+  p.sub{ color:var(--cream-200); opacity:.8; font-size:14.5px; margin:0 0 28px; line-height:1.9;}
 
-  .btn-row{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
-  .btn-row.two{ flex-direction:row; }
-
-  button{
+  .options{ display:flex; flex-direction:column; gap:12px; }
+  .options.row{ flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  button.opt{
+    border:1px solid rgba(233,180,192,.3);
+    background:rgba(255,255,255,.03);
+    color:var(--cream-100);
+    padding:14px 18px;
+    border-radius:16px;
     font-family:inherit;
     font-size:15px;
     font-weight:600;
-    border:none;
-    border-radius:16px;
-    padding:14px 16px;
     cursor:pointer;
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition:.2s ease;
   }
-  button:active{ transform:scale(0.97); }
-  .btn-primary{
-    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
-    color:#fff;
-    box-shadow:0 10px 24px -10px rgba(201,78,107,0.6);
-    flex:1.4;
+  button.opt:hover{ background:rgba(211,102,127,.18); border-color:var(--rose-500); transform:translateY(-2px); }
+  button.opt.primary{
+    background:linear-gradient(135deg, var(--rose-500), #b84a63);
+    border:none;
   }
-  .btn-ghost{
-    background:var(--paper);
-    color:var(--ink-soft);
-    border:1px solid var(--line);
-    flex:1;
-  }
-  .btn-ghost:hover{ color:var(--ink); }
+  button.opt.ghost{ opacity:.7; }
 
-  .field{ text-align:right; margin-bottom:18px; }
-  .field label{ display:block; font-size:13.5px; color:var(--ink-soft); margin-bottom:8px; }
-  input[type="date"], input[type="time"], input[type="text"]{
+  input[type=date], input.text-input{
     width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid rgba(233,180,192,.3);
+    background:rgba(255,255,255,.04);
+    color:var(--cream-100);
     font-family:inherit;
     font-size:15px;
-    padding:12px 14px;
-    border-radius:14px;
-    border:1.5px solid var(--line);
-    background:var(--paper);
-    color:var(--ink);
-    outline:none;
-  }
-  input:focus{ border-color:var(--rose); }
-  .row2{ display:flex; gap:10px; }
-
-  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; justify-content:center; }
-  .chip{
-    background:var(--paper);
-    border:1.5px solid var(--line);
-    color:var(--ink);
-    border-radius:999px;
-    padding:9px 14px;
-    font-size:14px;
-    cursor:pointer;
-    font-family:inherit;
-    transition: all .15s ease;
-  }
-  .chip.sel{
-    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
-    color:#fff;
-    border-color:transparent;
-  }
-
-  .next-btn{ width:100%; margin-top:4px; }
-
-  .center-msg{ text-align:center; padding:10px 0; color:var(--ink-soft); font-size:14px; line-height:2; }
-  code{
-    display:block;
-    direction:ltr;
-    text-align:left;
-    background:var(--paper);
-    border:1.5px dashed var(--line);
-    border-radius:12px;
-    padding:12px;
-    font-size:13px;
-    margin:12px 0;
-    word-break:break-all;
-    color:var(--ink);
-  }
-
-  .ticket{ position:relative; }
-  .ticket .divider{
-    position:relative;
-    height:0;
-    border-top:2px dashed var(--line);
-    margin:18px -26px;
-  }
-  .ticket .divider::before, .ticket .divider::after{
-    content:"";
-    position:absolute;
-    top:-11px;
-    width:22px; height:22px;
-    border-radius:50%;
-    background:var(--paper);
-    box-shadow: inset 0 0 0 1px var(--line);
-  }
-  .ticket .divider::before{ right:-11px; }
-  .ticket .divider::after{ left:-11px; }
-
-  .answer{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    padding:9px 0;
-    border-bottom:1px dashed var(--line);
-    font-size:14.5px;
-  }
-  .answer:last-child{ border-bottom:none; }
-  .answer .k{ color:var(--ink-soft); }
-  .answer .v{ font-weight:700; color:var(--rose-deep); }
-
-  .status-pill{
-    display:inline-block;
-    background:linear-gradient(135deg,var(--gold),var(--rose));
-    color:#fff;
-    padding:6px 16px;
-    border-radius:999px;
-    font-size:13px;
-    font-weight:700;
     margin-bottom:16px;
   }
+  input::-webkit-calendar-picker-indicator{ filter:invert(1); }
 
-  .reset-link{
-    display:block;
-    text-align:center;
-    margin-top:18px;
-    font-size:12.5px;
-    color:var(--ink-soft);
-    text-decoration:underline;
-    cursor:pointer;
-    background:none;
-    border:none;
-    width:100%;
-    padding:6px;
+  .heart{
+    font-size:42px; margin-bottom:6px;
+    animation:pulse 1.6s ease-in-out infinite;
   }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
 
-  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:5; }
-  .confetti span{
-    position:absolute; top:-5%; font-size:18px;
-    animation: fall 2.6s ease-in forwards;
-  }
-  @keyframes fall{
-    to{ transform: translateY(110vh) rotate(180deg); opacity:0; }
+  .footer-link{
+    position:fixed; bottom:14px; left:14px;
+    font-size:11px; color:rgba(246,236,225,.35);
+    text-decoration:none;
   }
 
-  @media (prefers-reduced-motion: reduce){
-    .floaties, .confetti{ display:none; }
-    .stage{ animation:none; }
+  /* admin */
+  .admin-item{
+    text-align:right;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(233,180,192,.15);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    font-size:14px;
+    line-height:2;
   }
+  .admin-item .time{ color:var(--gold-400); font-size:12px; display:block; margin-bottom:6px;}
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
 
-<div class="floaties" id="floaties"></div>
-
-<div class="card" id="card">
-  <div class="center-msg">در حال بارگذاری… 💗</div>
+<div class="card" id="app">
+  <!-- filled by JS -->
 </div>
 
+<a href="#" class="footer-link" id="adminLink">پنل مدیریت</a>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
-/* ============================================================
-   تنظیمات ثابت — این دو مقدار دیگه هیچ‌وقت خودکار عوض نمی‌شن.
+/* =========================================================
+   ۱) تنظیمات فایربیس — این بخش رو با کانفیگ خودت جایگزین کن
+   (راهنمای کامل ساخت پروژه فایربیس پایین توضیح داده شده)
+========================================================= */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-   JSONBIN_BIN_ID: آی‌دی همون بینی که از قبل روی jsonbin.io ساخته
-   شده. ثابته و این کد دیگه هیچ‌وقت بین جدید نمی‌سازه.
+// رمز ساده برای دیدن پنل جواب‌ها (فقط جلوی دیدن تصادفی رو می‌گیره، امنیت واقعی نیست)
+const ADMIN_PASSCODE = "love1234";
 
-   JSONBIN_ACCESS_KEY: به‌جای Master Key (که به کل حسابت دسترسی
-   داره)، از یه Access Key محدود استفاده می‌کنیم که توی داشبورد
-   jsonbin.io فقط برای همین یک بین، فقط با اجازه‌ی Read و Update
-   ساخته می‌شه. یعنی حتی اگه این کلید لو بره، فقط همین یک بین در
-   خطره، نه کل حسابت.
-   ============================================================ */
-const JSONBIN_BIN_ID = "BJuKJMZT6tyb5qsULiDj7c";
-const JSONBIN_ACCESS_KEY = "$2a$10$MRmf5MXhxlBBqlMXVf4S6uq1HOm4UeVpjIdsJON.7M4.ZvwCtpiY.";
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-const card = document.getElementById('card');
+/* =========================================================
+   ۲) داده‌ی سوالات — می‌تونی گزینه‌ها رو عوض کنی
+========================================================= */
+const WHERE_OPTIONS = ["رستوران دنج", "کافه", "سینما", "پیاده‌روی و پارک", "جایی که خودت انتخاب کن"];
+const FOOD_OPTIONS  = ["فست فود", "غذای ایرانی", "ایتالیایی", "فقط یه قهوه و دسر", "هرچی تو بخوای"];
 
-const STEPS = [
-  { key:'goDate', title:'بریم دیت؟', emoji:'💌',
-    sub:'یه سوال ساده قبل از هر برنامه‌ای...' },
-  { key:'when', title:'کِی بریم؟', emoji:'🗓️',
-    sub:'تاریخ و ساعتی که برات خوبه رو انتخاب کن.' },
-  { key:'where', title:'کجا بریم؟', emoji:'📍',
-    sub:'یکی رو انتخاب کن یا خودت یه‌جا پیشنهاد بده.',
-    chips:['کافه ☕','رستوران 🍽️','سینما 🎬','پارک 🌳','غافلگیرم کن ✨'] },
-  { key:'what', title:'چی بخوریم؟', emoji:'🍰',
-    sub:'دهنمون آب افتاد… بگو چی میل داری.',
-    chips:['پیتزا 🍕','سوشی 🍣','کباب 🍢','برگر 🍔','هرچی تو دوست داری 💗'] },
-];
+let answers = { date:"", where:"", food:"" };
 
-let step = 0;
-let answers = {};
+const app = document.getElementById('app');
 
-function floatHearts(){
-  const wrap = document.getElementById('floaties');
-  const hearts = ['💗','💖','💕','✨'];
-  for(let i=0;i<10;i++){
-    const s = document.createElement('span');
-    s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
-    s.style.left = Math.random()*100+'%';
-    s.style.animationDuration = (10+Math.random()*10)+'s';
-    s.style.animationDelay = (Math.random()*10)+'s';
-    s.style.fontSize = (14+Math.random()*14)+'px';
-    wrap.appendChild(s);
-  }
-}
-floatHearts();
-
-async function jbGet(binId){
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-    headers: { 'X-Access-Key': JSONBIN_ACCESS_KEY },
-    cache:'no-store'
-  });
-  if(!res.ok) throw new Error('read-failed');
-  const json = await res.json();
-  return json.record;
-}
-async function jbSet(binId, data){
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-    method:'PUT',
-    headers: { 'Content-Type':'application/json', 'X-Access-Key': JSONBIN_ACCESS_KEY },
-    body: JSON.stringify(data)
-  });
-  if(!res.ok) throw new Error('write-failed');
+function petals(step){
+  let html = '<div class="petals">';
+  for(let i=0;i<4;i++){ html += `<div class="petal ${i<step?'on':''}"></div>`; }
+  html += '</div>';
+  return html;
 }
 
-function renderNeedAccessKey(){
-  card.innerHTML = `
-    <div class="eyebrow"><span>راه‌اندازی اولیه</span><b>دیت 💌</b></div>
-    <div class="emoji">🔑</div>
-    <h1>یک قدم مونده</h1>
-    <p class="sub">وارد حساب jsonbin.io شو، از بخش API Keys یه
-      <b>Access Key</b> فقط برای همین یک بین بساز (با اجازه‌ی
-      Read و Update)، بعد مقدارش رو جای متن زیر توی فایل index.html
-      بذار و دوباره توی گیت‌هاب ذخیره کن:</p>
-    <code>const JSONBIN_ACCESS_KEY = "کلیدت_اینجا";</code>
+/* ---------- مرحله ۰: بریم دیت؟ ---------- */
+function renderAsk(){
+  app.innerHTML = `
+    ${petals(0)}
+    <div class="heart">💌</div>
+    <div class="eyebrow">یه پیشنهاد کوچولو</div>
+    <h1>بریم یه دیت؟</h1>
+    <p class="sub">فقط چندتا سوال کوچیک مونده تا برنامه‌مون آماده بشه</p>
+    <div class="options row">
+      <button class="opt primary" onclick="renderDate()">اره بریم 🤍</button>
+      <button class="opt ghost" onclick="renderNo()">فعلا نه</button>
+    </div>
   `;
 }
 
-function renderError(msg){
-  card.innerHTML = `
-    <div class="emoji">😕</div>
-    <h1>یه مشکلی پیش اومد</h1>
-    <p class="sub">${msg}</p>
-    <button class="btn-primary" style="width:100%" onclick="location.reload()">امتحان دوباره</button>
+function renderNo(){
+  app.innerHTML = `
+    ${petals(0)}
+    <div class="heart">🥲</div>
+    <h1>باشه، هروقت خواستی بگو</h1>
+    <p class="sub">همیشه یه در برات بازه</p>
+    <div class="options">
+      <button class="opt" onclick="renderAsk()">بازم فکر کن</button>
+    </div>
   `;
 }
 
-function railHTML(activeIndex){
-  return STEPS.map((_,i)=>{
-    const cls = i < activeIndex ? 'done' : (i===activeIndex ? 'active' : '');
-    return `<i><b class="${cls}"></b></i>`;
-  }).join('');
+/* ---------- مرحله ۱: تاریخ ---------- */
+function renderDate(){
+  app.innerHTML = `
+    ${petals(1)}
+    <div class="eyebrow">مرحله ۱ از ۳</div>
+    <h1>کی برات خوبه؟</h1>
+    <p class="sub">یه تاریخ انتخاب کن</p>
+    <input type="date" id="dateInput">
+    <div class="options">
+      <button class="opt primary" onclick="submitDate()">بعدی</button>
+    </div>
+  `;
+}
+function submitDate(){
+  const v = document.getElementById('dateInput').value;
+  if(!v){ alert('یه تاریخ انتخاب کن'); return; }
+  answers.date = v;
+  renderWhere();
 }
 
-function renderStep(){
-  const s = STEPS[step];
-  let body = '';
+/* ---------- مرحله ۲: کجا ---------- */
+function renderWhere(){
+  app.innerHTML = `
+    ${petals(2)}
+    <div class="eyebrow">مرحله ۲ از ۳</div>
+    <h1>کجا بریم؟</h1>
+    <div class="options">
+      ${WHERE_OPTIONS.map(o=>`<button class="opt" onclick="submitWhere('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
+    </div>
+  `;
+}
+function submitWhere(v){ answers.where = v; renderFood(); }
 
-  if(s.key === 'goDate'){
-    body = `
-      <div class="btn-row two">
-        <button class="btn-primary" onclick="answerGoDate(true)">بله 😍</button>
-        <button class="btn-ghost" onclick="answerGoDate(false)">بذار بعد بگم</button>
+/* ---------- مرحله ۳: چی بخوریم ---------- */
+function renderFood(){
+  app.innerHTML = `
+    ${petals(3)}
+    <div class="eyebrow">مرحله ۳ از ۳</div>
+    <h1>چی بخوریم؟</h1>
+    <div class="options">
+      ${FOOD_OPTIONS.map(o=>`<button class="opt" onclick="submitFood('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
+    </div>
+  `;
+}
+function submitFood(v){
+  answers.food = v;
+  saveAndFinish();
+}
+
+/* ---------- ذخیره در فایربیس + پیام پایانی ---------- */
+function saveAndFinish(){
+  app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>داره ثبت میشه...</h1>`;
+  db.collection('responses').add({
+    date: answers.date,
+    where: answers.where,
+    food: answers.food,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    renderThanks();
+  }).catch(err=>{
+    console.error(err);
+    app.innerHTML = `
+      <h1>یه مشکلی پیش اومد 😕</h1>
+      <p class="sub">اتصال به دیتابیس برقرار نشد. کانفیگ فایربیس رو چک کن.</p>
+      <div class="options"><button class="opt" onclick="renderAsk()">برگرد به اول</button></div>
+    `;
+  });
+}
+
+function renderThanks(){
+  app.innerHTML = `
+    ${petals(4)}
+    <div class="heart">🥰</div>
+    <h1>وایییی خیلی خوشحالم کردی!</h1>
+    <p class="sub">قرارمون افتاد. تا اون روز لحظه‌شماری می‌کنم ❤️</p>
+  `;
+}
+
+/* ========================= پنل مدیریت ========================= */
+document.getElementById('adminLink').addEventListener('click', (e)=>{
+  e.preventDefault();
+  const code = prompt('رمز پنل رو وارد کن:');
+  if(code === ADMIN_PASSCODE){ renderAdmin(); }
+  else if(code !== null){ alert('رمز اشتباهه'); }
+});
+
+function renderAdmin(){
+  app.innerHTML = `
+    <div class="eyebrow">پنل مدیریت</div>
+    <h1>جواب‌های ثبت شده</h1>
+    <div id="adminList" style="text-align:right;">در حال بارگذاری...</div>
+    <div class="options" style="margin-top:18px;">
+      <button class="opt" onclick="renderAsk()">بازگشت به سایت</button>
+    </div>
+  `;
+  db.collection('responses').orderBy('createdAt','desc').get().then(snap=>{
+    const list = document.getElementById('adminList');
+    if(snap.empty){ list.innerHTML = '<p class="sub">هنوز جوابی ثبت نشده.</p>'; return; }
+    list.innerHTML = snap.docs.map(doc=>{
+      const d = doc.data();
+      const t = d.createdAt ? d.createdAt.toDate().toLocaleString('fa-IR') : '—';
+      return `<div class="admin-item">
+        <span class="time">${t}</span>
+        📅 تاریخ: ${d.date || '—'}<br>
+        📍 کجا: ${d.where || '—'}<br>
+        🍽️ چی: ${d.food || '—'}
       </div>`;
-  } else if(s.key === 'when'){
-    body = `
-      <div class="field">
-        <label>تاریخ</label>
-        <input type="date" id="inp-date">
-      </div>
-      <div class="field">
-        <label>ساعت</label>
-        <input type="time" id="inp-time">
-      </div>
-      <button class="btn-primary next-btn" onclick="answerWhen()">بعدی</button>`;
-  } else if(s.key === 'where' || s.key === 'what'){
-    const chips = s.chips.map(c=>`<button type="button" class="chip" data-val="${c}" onclick="toggleChip(this)">${c}</button>`).join('');
-    body = `
-      <div class="chips">${chips}</div>
-      <div class="field">
-        <label>یا خودت بنویس</label>
-        <input type="text" id="inp-custom" placeholder="مثلاً یه جای خاص که تو ذهنته...">
-      </div>
-      <button class="btn-primary next-btn" onclick="answerChip('${s.key}')">${step === STEPS.length-1 ? 'ثبت نهایی 💌' : 'بعدی'}</button>`;
-  }
-
-  card.innerHTML = `
-    <div class="eyebrow"><span>مرحله ${step+1} از ${STEPS.length}</span><b>دیت 💌</b></div>
-    <div class="rail">${railHTML(step)}</div>
-    <div class="stage active">
-      <div class="emoji">${s.emoji}</div>
-      <h1>${s.title}</h1>
-      <p class="sub">${s.sub}</p>
-      ${body}
-    </div>
-  `;
+    }).join('');
+  }).catch(err=>{
+    document.getElementById('adminList').innerHTML = '<p class="sub">خطا در دریافت اطلاعات.</p>';
+    console.error(err);
+  });
 }
 
-function toggleChip(btn){
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
-  btn.classList.add('sel');
-  document.getElementById('inp-custom').value = '';
-}
-
-async function answerGoDate(yes){
-  answers.goDate = yes ? 'بله 😍' : 'فعلاً نه';
-  if(!yes){
-    await saveAndShow({ status:'not-yet', answers });
-    card.innerHTML = `
-      <div class="emoji">💭</div>
-      <h1>باشه، عجله‌ای نیست</h1>
-      <p class="sub">هروقت آماده بودی، دوباره سر بزن و بگو «بله» 💗</p>`;
-    return;
-  }
-  step = 1;
-  renderStep();
-}
-
-async function answerWhen(){
-  const d = document.getElementById('inp-date').value;
-  const t = document.getElementById('inp-time').value;
-  if(!d || !t){
-    document.getElementById('inp-date').style.borderColor = 'var(--rose)';
-    document.getElementById('inp-time').style.borderColor = 'var(--rose)';
-    return;
-  }
-  answers.when = `${d} - ${t}`;
-  step = 2;
-  renderStep();
-}
-
-async function answerChip(key){
-  const selected = document.querySelector('.chip.sel');
-  const custom = document.getElementById('inp-custom').value.trim();
-  const val = custom || (selected ? selected.dataset.val : '');
-  if(!val){
-    document.getElementById('inp-custom').style.borderColor = 'var(--rose)';
-    return;
-  }
-  answers[key] = val;
-
-  if(step === STEPS.length - 1){
-    await saveAndShow({ status:'done', answers });
-    showThankYou();
-  } else {
-    step++;
-    renderStep();
-  }
-}
-
-function showThankYou(){
-  const wrap = document.createElement('div');
-  wrap.className = 'confetti';
-  document.body.appendChild(wrap);
-  const hearts = ['💗','💖','💕','🎉','✨'];
-  for(let i=0;i<26;i++){
-    const s = document.createElement('span');
-    s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
-    s.style.left = Math.random()*100+'%';
-    s.style.animationDelay = (Math.random()*0.8)+'s';
-    wrap.appendChild(s);
-  }
-  card.innerHTML = `
-    <div class="emoji">🎉</div>
-    <h1>ثبت شد!</h1>
-    <p class="sub">مرسی که وقت گذاشتی. حالا فقط باید منتظر روزی باشیم
-      که برنامه‌مون بشه واقعیت 💗</p>`;
-}
-
-function renderTicket(data){
-  const a = data.answers || {};
-  const pillText = data.status === 'done' ? 'قرار ثبت شده! 🎉' : 'هنوز منتظر جوابه…';
-  card.innerHTML = `
-    <div class="eyebrow"><span>خلاصه‌ی قرار</span><b>دیت 💌</b></div>
-    <div class="ticket">
-      <div style="text-align:center">
-        <span class="status-pill">${pillText}</span>
-      </div>
-      <div class="answer"><span class="k">میاد؟</span><span class="v">${a.goDate || '—'}</span></div>
-      <div class="divider"></div>
-      <div class="answer"><span class="k">کِی</span><span class="v">${a.when || '—'}</span></div>
-      <div class="answer"><span class="k">کجا</span><span class="v">${a.where || '—'}</span></div>
-      <div class="answer"><span class="k">چی بخوریم</span><span class="v">${a.what || '—'}</span></div>
-    </div>
-    <button class="reset-link" onclick="resetFlow()">پاک کردن و شروع دوباره</button>
-  `;
-}
-
-async function saveAndShow(data){
-  try{
-    await jbSet(JSONBIN_BIN_ID, data);
-  }catch(e){
-    renderError('پاسخ ثبت نشد. اتصال اینترنت رو چک کن و دوباره امتحان کن.');
-    throw e;
-  }
-}
-
-async function resetFlow(){
-  if(!confirm('مطمئنی می‌خوای همه‌چیز پاک بشه؟')) return;
-  answers = {};
-  step = 0;
-  try{
-    await jbSet(JSONBIN_BIN_ID, { status:'pending', answers:null });
-  }catch(e){}
-  renderStep();
-}
-
-async function boot(){
-  if(!JSONBIN_ACCESS_KEY || JSONBIN_ACCESS_KEY.indexOf('اینجا') !== -1){
-    renderNeedAccessKey();
-    return;
-  }
-  try{
-    const data = await jbGet(JSONBIN_BIN_ID);
-    if(data && (data.status === 'done' || data.status === 'not-yet')){
-      renderTicket(data);
-    } else {
-      step = 0;
-      renderStep();
-    }
-  }catch(e){
-    renderError('نشد اطلاعات رو بخونیم. اتصال اینترنت رو چک کن و دوباره امتحان کن.');
-  }
-}
-
-boot();
+renderAsk();
 </script>
 </body>
 </html>
