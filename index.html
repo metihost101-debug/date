@@ -144,16 +144,31 @@
    (راهنمای کامل ساخت پروژه فایربیس پایین توضیح داده شده)
 ========================================================= */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBK5ZVetMVTvNCAvTDtNAfW5r4hO_n3xzc",
+  authDomain: "date-d63e7.firebaseapp.com",
+  projectId: "date-d63e7",
+  storageBucket: "date-d63e7.firebasestorage.app",
+  messagingSenderId: "962103781199",
+  appId: "1:962103781199:web:9aa4d88e150f1c8dbb873a",
+  measurementId: "G-R8SXW0YBKV"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 };
 
 // رمز ساده برای دیدن پنل جواب‌ها (فقط جلوی دیدن تصادفی رو می‌گیره، امنیت واقعی نیست)
-const ADMIN_PASSCODE = "love1234";
+const ADMIN_PASSCODE = "love1441";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
