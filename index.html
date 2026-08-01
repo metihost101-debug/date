@@ -168,10 +168,17 @@ const analytics = getAnalytics(app);
 };
 
 // رمز ساده برای دیدن پنل جواب‌ها (فقط جلوی دیدن تصادفی رو می‌گیره، امنیت واقعی نیست)
-const ADMIN_PASSCODE = "love1441";
+const ADMIN_PASSCODE = "love1234";
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+let db = null;
+let firebaseError = null;
+try{
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}catch(e){
+  console.error('Firebase init failed:', e);
+  firebaseError = e;
+}
 
 /* =========================================================
    ۲) داده‌ی سوالات — می‌تونی گزینه‌ها رو عوض کنی
@@ -267,31 +274,52 @@ function submitFood(v){
 }
 
 /* ---------- ذخیره در فایربیس + پیام پایانی ---------- */
+function saveToLocalFallback(){
+  try{
+    const list = JSON.parse(localStorage.getItem('date_responses') || '[]');
+    list.push({ ...answers, createdAt: new Date().toISOString(), source:'local' });
+    localStorage.setItem('date_responses', JSON.stringify(list));
+    return true;
+  }catch(e){ console.error('localStorage fallback failed:', e); return false; }
+}
+
+function timeout(ms){
+  return new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms));
+}
+
 function saveAndFinish(){
   app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>داره ثبت میشه...</h1>`;
-  db.collection('responses').add({
+
+  if(!db){
+    // فایربیس اصلا وصل نشده - مستقیم برو سراغ ذخیره‌ی محلی
+    saveToLocalFallback();
+    renderThanks(true);
+    return;
+  }
+
+  const savePromise = db.collection('responses').add({
     date: answers.date,
     where: answers.where,
     food: answers.food,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    renderThanks();
-  }).catch(err=>{
-    console.error(err);
-    app.innerHTML = `
-      <h1>یه مشکلی پیش اومد 😕</h1>
-      <p class="sub">اتصال به دیتابیس برقرار نشد. کانفیگ فایربیس رو چک کن.</p>
-      <div class="options"><button class="opt" onclick="renderAsk()">برگرد به اول</button></div>
-    `;
   });
+
+  Promise.race([savePromise, timeout(8000)])
+    .then(()=>{ renderThanks(false); })
+    .catch(err=>{
+      console.error('Save failed or timed out:', err);
+      const savedLocally = saveToLocalFallback();
+      renderThanks(savedLocally);
+    });
 }
 
-function renderThanks(){
+function renderThanks(localOnly){
   app.innerHTML = `
     ${petals(4)}
     <div class="heart">🥰</div>
     <h1>وایییی خیلی خوشحالم کردی!</h1>
     <p class="sub">قرارمون افتاد. تا اون روز لحظه‌شماری می‌کنم ❤️</p>
+    ${localOnly ? '<p class="sub" style="opacity:.55;font-size:12px;">(روی همین گوشی ذخیره شد، اتصال به سرور برقرار نشد)</p>' : ''}
   `;
 }
 
@@ -299,9 +327,24 @@ function renderThanks(){
 document.getElementById('adminLink').addEventListener('click', (e)=>{
   e.preventDefault();
   const code = prompt('رمز پنل رو وارد کن:');
-  if(code === ADMIN_PASSCODE){ renderAdmin(); }
+  if(code !== null && code.trim() === ADMIN_PASSCODE.trim()){ renderAdmin(); }
   else if(code !== null){ alert('رمز اشتباهه'); }
 });
+
+function renderLocalEntries(){
+  let list = [];
+  try{ list = JSON.parse(localStorage.getItem('date_responses') || '[]'); }catch(e){}
+  if(!list.length) return '';
+  return list.slice().reverse().map(d=>{
+    const t = d.createdAt ? new Date(d.createdAt).toLocaleString('fa-IR') : '—';
+    return `<div class="admin-item">
+      <span class="time">${t} (روی همین گوشی)</span>
+      📅 تاریخ: ${d.date || '—'}<br>
+      📍 کجا: ${d.where || '—'}<br>
+      🍽️ چی: ${d.food || '—'}
+    </div>`;
+  }).join('');
+}
 
 function renderAdmin(){
   app.innerHTML = `
@@ -312,26 +355,51 @@ function renderAdmin(){
       <button class="opt" onclick="renderAsk()">بازگشت به سایت</button>
     </div>
   `;
+  const localHtml = renderLocalEntries();
+
+  if(!db){
+    document.getElementById('adminList').innerHTML =
+      localHtml || '<p class="sub">هنوز جوابی ثبت نشده و اتصال به فایربیس هم برقرار نیست.</p>';
+    return;
+  }
+
   db.collection('responses').orderBy('createdAt','desc').get().then(snap=>{
     const list = document.getElementById('adminList');
-    if(snap.empty){ list.innerHTML = '<p class="sub">هنوز جوابی ثبت نشده.</p>'; return; }
-    list.innerHTML = snap.docs.map(doc=>{
-      const d = doc.data();
-      const t = d.createdAt ? d.createdAt.toDate().toLocaleString('fa-IR') : '—';
-      return `<div class="admin-item">
-        <span class="time">${t}</span>
-        📅 تاریخ: ${d.date || '—'}<br>
-        📍 کجا: ${d.where || '—'}<br>
-        🍽️ چی: ${d.food || '—'}
-      </div>`;
-    }).join('');
+    let cloudHtml = '';
+    if(!snap.empty){
+      cloudHtml = snap.docs.map(doc=>{
+        const d = doc.data();
+        const t = d.createdAt ? d.createdAt.toDate().toLocaleString('fa-IR') : '—';
+        return `<div class="admin-item">
+          <span class="time">${t}</span>
+          📅 تاریخ: ${d.date || '—'}<br>
+          📍 کجا: ${d.where || '—'}<br>
+          🍽️ چی: ${d.food || '—'}
+        </div>`;
+      }).join('');
+    }
+    const combined = cloudHtml + localHtml;
+    list.innerHTML = combined || '<p class="sub">هنوز جوابی ثبت نشده.</p>';
   }).catch(err=>{
-    document.getElementById('adminList').innerHTML = '<p class="sub">خطا در دریافت اطلاعات.</p>';
-    console.error(err);
+    console.error('Admin fetch failed:', err);
+    document.getElementById('adminList').innerHTML =
+      '<p class="sub">خطا در دریافت اطلاعات از فایربیس' +
+      (localHtml ? '، ولی این‌ها روی گوشی ذخیره شده بودن:' : '.') + '</p>' + localHtml;
   });
 }
 
-renderAsk();
+try{
+  renderAsk();
+}catch(e){
+  console.error('Initial render failed:', e);
+  app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن. اگه ادامه داشت، کنسول مرورگر (F12) رو چک کن.</p>`;
+}
+
+window.addEventListener('error', (e)=>{
+  if(!app.innerHTML.trim()){
+    app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن (Ctrl+Shift+R). اگه ادامه داشت، کنسول مرورگر رو چک کن.</p>`;
+  }
+});
 </script>
 </body>
 </html>
