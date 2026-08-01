@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>یه 1 دیت؟</title>
+<title>یه دیت؟</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -57,7 +57,7 @@
 
   .eyebrow{
     font-size:13px; letter-spacing:.14em; color:var(--gold-400);
-    font-weight:600; margin-bottom:10px; text-transform:none;
+    font-weight:600; margin-bottom:10px;
   }
   h1{
     font-size:26px; font-weight:800; margin:0 0 14px; line-height:1.5;
@@ -86,7 +86,7 @@
   }
   button.opt.ghost{ opacity:.7; }
 
-  input[type=date], input.text-input{
+  input[type=date]{
     width:100%;
     padding:14px 16px;
     border-radius:14px;
@@ -104,90 +104,39 @@
     animation:pulse 1.6s ease-in-out infinite;
   }
   @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
-
-  .footer-link{
-    position:fixed; bottom:14px; left:14px;
-    font-size:11px; color:rgba(246,236,225,.35);
-    text-decoration:none;
-  }
-
-  /* admin */
-  .admin-item{
-    text-align:right;
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(233,180,192,.15);
-    border-radius:14px;
-    padding:14px 16px;
-    margin-bottom:12px;
-    font-size:14px;
-    line-height:2;
-  }
-  .admin-item .time{ color:var(--gold-400); font-size:12px; display:block; margin-bottom:6px;}
-  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
 
-<div class="card" id="app">
-  <!-- filled by JS -->
-</div>
+<div class="card" id="app"></div>
 
-<a href="#" class="footer-link" id="adminLink">پنل مدیریت</a>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
 /* =========================================================
-   ۱) تنظیمات فایربیس — این بخش رو با کانفیگ خودت جایگزین کن
-   (راهنمای کامل ساخت پروژه فایربیس پایین توضیح داده شده)
+   تنظیمات EmailJS — این ۳ مقدار رو از پنل EmailJS خودت بردار
+   راهنما پایین توضیحات چت هست
 ========================================================= */
-const firebaseConfig = {
-  // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+const EMAILJS_PUBLIC_KEY  = "4sBQXocECkOiVRHc3";
+const EMAILJS_SERVICE_ID  = "service_rc1nf9s";
+const EMAILJS_TEMPLATE_ID = "template_6sijb8t";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBK5ZVetMVTvNCAvTDtNAfW5r4hO_n3xzc",
-  authDomain: "date-d63e7.firebaseapp.com",
-  projectId: "date-d63e7",
-  storageBucket: "date-d63e7.firebasestorage.app",
-  messagingSenderId: "962103781199",
-  appId: "1:962103781199:web:9aa4d88e150f1c8dbb873a",
-  measurementId: "G-R8SXW0YBKV"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-};
-
-// رمز ساده برای دیدن پنل جواب‌ها (فقط جلوی دیدن تصادفی رو می‌گیره، امنیت واقعی نیست)
-const ADMIN_PASSCODE = "love1234";
-
-let db = null;
-let firebaseError = null;
+let emailReady = false;
 try{
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  emailReady = true;
 }catch(e){
-  console.error('Firebase init failed:', e);
-  firebaseError = e;
+  console.error('EmailJS init failed:', e);
 }
 
 /* =========================================================
-   ۲) داده‌ی سوالات — می‌تونی گزینه‌ها رو عوض کنی
+   داده‌ی سوالات — می‌تونی گزینه‌ها رو عوض کنی
 ========================================================= */
 const WHERE_OPTIONS = ["رستوران دنج", "کافه", "سینما", "پیاده‌روی و پارک", "جایی که خودت انتخاب کن"];
 const FOOD_OPTIONS  = ["فست فود", "غذای ایرانی", "ایتالیایی", "فقط یه قهوه و دسر", "هرچی تو بخوای"];
 
 let answers = { date:"", where:"", food:"" };
-
 const app = document.getElementById('app');
 
 function petals(step){
@@ -273,119 +222,43 @@ function submitFood(v){
   saveAndFinish();
 }
 
-/* ---------- ذخیره در فایربیس + پیام پایانی ---------- */
-function saveToLocalFallback(){
-  try{
-    const list = JSON.parse(localStorage.getItem('date_responses') || '[]');
-    list.push({ ...answers, createdAt: new Date().toISOString(), source:'local' });
-    localStorage.setItem('date_responses', JSON.stringify(list));
-    return true;
-  }catch(e){ console.error('localStorage fallback failed:', e); return false; }
-}
-
+/* ---------- ارسال ایمیل + پیام پایانی ---------- */
 function timeout(ms){
   return new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms));
 }
 
 function saveAndFinish(){
-  app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>داره ثبت میشه...</h1>`;
+  app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>یه لحظه...</h1>`;
 
-  if(!db){
-    // فایربیس اصلا وصل نشده - مستقیم برو سراغ ذخیره‌ی محلی
-    saveToLocalFallback();
-    renderThanks(true);
+  const finish = ()=> renderThanks();
+
+  if(!emailReady){
+    // اگه ایمیل وصل نبود، به‌هرحال تجربه رو برای طرف مقابل خراب نکن
+    console.warn('EmailJS not ready, skipping email send.');
+    finish();
     return;
   }
 
-  const savePromise = db.collection('responses').add({
-    date: answers.date,
+  const sendPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    date:  answers.date,
     where: answers.where,
-    food: answers.food,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    food:  answers.food
   });
 
-  Promise.race([savePromise, timeout(8000)])
-    .then(()=>{ renderThanks(false); })
-    .catch(err=>{
-      console.error('Save failed or timed out:', err);
-      const savedLocally = saveToLocalFallback();
-      renderThanks(savedLocally);
-    });
+  // چه ایمیل بره چه نره، تجربه‌ی طرف مقابل همیشه با یه پیام قشنگ تموم میشه
+  // (خطای فنی فقط تو کنسول لاگ میشه، نه رو صفحه)
+  Promise.race([sendPromise, timeout(8000)])
+    .then(()=> finish())
+    .catch(err=>{ console.error('Email send failed or timed out:', err); finish(); });
 }
 
-function renderThanks(localOnly){
+function renderThanks(){
   app.innerHTML = `
     ${petals(4)}
     <div class="heart">🥰</div>
     <h1>وایییی خیلی خوشحالم کردی!</h1>
     <p class="sub">قرارمون افتاد. تا اون روز لحظه‌شماری می‌کنم ❤️</p>
-    ${localOnly ? '<p class="sub" style="opacity:.55;font-size:12px;">(روی همین گوشی ذخیره شد، اتصال به سرور برقرار نشد)</p>' : ''}
   `;
-}
-
-/* ========================= پنل مدیریت ========================= */
-document.getElementById('adminLink').addEventListener('click', (e)=>{
-  e.preventDefault();
-  const code = prompt('رمز پنل رو وارد کن:');
-  if(code !== null && code.trim() === ADMIN_PASSCODE.trim()){ renderAdmin(); }
-  else if(code !== null){ alert('رمز اشتباهه'); }
-});
-
-function renderLocalEntries(){
-  let list = [];
-  try{ list = JSON.parse(localStorage.getItem('date_responses') || '[]'); }catch(e){}
-  if(!list.length) return '';
-  return list.slice().reverse().map(d=>{
-    const t = d.createdAt ? new Date(d.createdAt).toLocaleString('fa-IR') : '—';
-    return `<div class="admin-item">
-      <span class="time">${t} (روی همین گوشی)</span>
-      📅 تاریخ: ${d.date || '—'}<br>
-      📍 کجا: ${d.where || '—'}<br>
-      🍽️ چی: ${d.food || '—'}
-    </div>`;
-  }).join('');
-}
-
-function renderAdmin(){
-  app.innerHTML = `
-    <div class="eyebrow">پنل مدیریت</div>
-    <h1>جواب‌های ثبت شده</h1>
-    <div id="adminList" style="text-align:right;">در حال بارگذاری...</div>
-    <div class="options" style="margin-top:18px;">
-      <button class="opt" onclick="renderAsk()">بازگشت به سایت</button>
-    </div>
-  `;
-  const localHtml = renderLocalEntries();
-
-  if(!db){
-    document.getElementById('adminList').innerHTML =
-      localHtml || '<p class="sub">هنوز جوابی ثبت نشده و اتصال به فایربیس هم برقرار نیست.</p>';
-    return;
-  }
-
-  db.collection('responses').orderBy('createdAt','desc').get().then(snap=>{
-    const list = document.getElementById('adminList');
-    let cloudHtml = '';
-    if(!snap.empty){
-      cloudHtml = snap.docs.map(doc=>{
-        const d = doc.data();
-        const t = d.createdAt ? d.createdAt.toDate().toLocaleString('fa-IR') : '—';
-        return `<div class="admin-item">
-          <span class="time">${t}</span>
-          📅 تاریخ: ${d.date || '—'}<br>
-          📍 کجا: ${d.where || '—'}<br>
-          🍽️ چی: ${d.food || '—'}
-        </div>`;
-      }).join('');
-    }
-    const combined = cloudHtml + localHtml;
-    list.innerHTML = combined || '<p class="sub">هنوز جوابی ثبت نشده.</p>';
-  }).catch(err=>{
-    console.error('Admin fetch failed:', err);
-    document.getElementById('adminList').innerHTML =
-      '<p class="sub">خطا در دریافت اطلاعات از فایربیس' +
-      (localHtml ? '، ولی این‌ها روی گوشی ذخیره شده بودن:' : '.') + '</p>' + localHtml;
-  });
 }
 
 try{
@@ -394,12 +267,6 @@ try{
   console.error('Initial render failed:', e);
   app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن. اگه ادامه داشت، کنسول مرورگر (F12) رو چک کن.</p>`;
 }
-
-window.addEventListener('error', (e)=>{
-  if(!app.innerHTML.trim()){
-    app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن (Ctrl+Shift+R). اگه ادامه داشت، کنسول مرورگر رو چک کن.</p>`;
-  }
-});
 </script>
 </body>
 </html>
