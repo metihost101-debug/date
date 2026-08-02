@@ -40,7 +40,7 @@
     0%{ background-position:0% 0%, 0% 0%, 0% 50%; }
     100%{ background-position:0% 0%, 0% 0%, 100% 50%; }
   }
- 
+
   /* شناور‌های پس‌زمینه */
   .floaties{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
   .floaty{
@@ -55,7 +55,7 @@
     90%{ opacity:.6; }
     100%{ transform:translateY(-110vh) translateX(-14px) rotate(-8deg); opacity:0; }
   }
- 
+
   .card{
     width:100%;
     max-width:480px;
@@ -73,11 +73,11 @@
   .petals{ display:flex; justify-content:center; gap:8px; margin-bottom:22px; }
   .petal{ width:10px;height:10px;border-radius:50%; background:rgba(246,236,225,.15); transition:all .4s ease; }
   .petal.on{background:var(--rose-500); box-shadow:0 0 12px rgba(211,102,127,.7); transform:scale(1.3);}
- 
+
   .eyebrow{ font-size:13px; letter-spacing:.14em; color:var(--gold-400); font-weight:600; margin-bottom:10px; }
   h1{ font-size:26px; font-weight:800; margin:0 0 14px; line-height:1.5; color:var(--cream-100); }
   p.sub{ color:var(--cream-200); opacity:.8; font-size:14.5px; margin:0 0 22px; line-height:1.9;}
- 
+
   .options{ display:flex; flex-direction:column; gap:12px; }
   .options.row{ flex-direction:row; flex-wrap:wrap; justify-content:center; }
   button.opt{
@@ -95,7 +95,7 @@
   button.opt:hover{ background:rgba(211,102,127,.18); border-color:var(--rose-500); transform:translateY(-2px); }
   button.opt.primary{ background:linear-gradient(135deg, var(--rose-500), #b84a63); border:none; }
   button.opt.ghost{ opacity:.7; }
- 
+
   .row-fields{ display:flex; gap:10px; margin-bottom:16px; }
   select, input[type=time], input[type=text]{
     width:100%;
@@ -111,10 +111,10 @@
   input[type=text]{ margin-bottom:16px; text-align:right; padding-right:14px; }
   label.field-label{ display:block; font-size:12px; color:var(--cream-200); opacity:.7; margin:14px 0 8px; }
   select option{ color:#222; }
- 
+
   .heart{ font-size:42px; margin-bottom:6px; animation:pulse 1.6s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
- 
+
   .love-line{
     font-size:15px; line-height:2; opacity:0; margin:0 0 4px;
     animation: fadeInLine .6s ease forwards;
@@ -122,13 +122,13 @@
 </style>
 </head>
 <body>
- 
+
 <div class="floaties" id="floaties"></div>
 <div class="card" id="app"></div>
- 
+
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
- 
+
 <script>
 /* =========================================================
    تنظیمات EmailJS — این ۳ مقدار رو از پنل EmailJS خودت بردار
@@ -136,13 +136,13 @@
 const EMAILJS_PUBLIC_KEY  = "4sBQXocECkOiVRHc3";
 const EMAILJS_SERVICE_ID  = "service_rc1nf9s";
 const EMAILJS_TEMPLATE_ID = "template_6sijb8t";
- 
+
 let emailReady = false;
 try{
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   emailReady = true;
 }catch(e){ console.error('EmailJS init failed:', e); }
- 
+
 /* =========================================================
    پس‌زمینه‌ی شناور
 ========================================================= */
@@ -165,7 +165,7 @@ try{
     wrap.appendChild(s);
   }
 })();
- 
+
 /* =========================================================
    کمکی: تبدیل عدد به رقم فارسی
 ========================================================= */
@@ -173,12 +173,12 @@ function toFa(n){
   const fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
   return String(n).replace(/[0-9]/g, d => fa[d]);
 }
- 
+
 /* =========================================================
    تقویم شمسی (فقط برای ساخت گزینه‌های سال/ماه/روز)
 ========================================================= */
 const JALALI_MONTHS = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
- 
+
 function isLeapJalali(jy){
   const r = ((jy % 33) + 33) % 33;
   return [1,5,9,13,17,22,26,30].includes(r);
@@ -200,32 +200,34 @@ function getCurrentJalaliYMD(){
     return {y:1404, m:1, d:1};
   }
 }
- 
+
 /* =========================================================
    داده‌ی سوالات
 ========================================================= */
 const WHERE_OPTIONS = ["رستوران دنج", "کافه", "سینما", "پیاده‌روی و پارک", "جایی که خودت انتخاب کن"];
 const FREE_TEXT_OPTION = "یه چیز دیگه (خودم می‌نویسم)";
- 
+
 const STEP3_CONFIG = {
   "رستوران دنج": { question:"چی بخوریم؟", type:"options", options:["فست فود","غذای ایرانی","ایتالیایی","غذای دریایی","هرچی تو بخوای"] },
   "کافه": { question:"چی سفارش بدم برات؟", type:"options", options:["قهوه","چای و دمنوش","یه دسر شیرین","نوشیدنی سرد","هرچی خودت دوست داری"] },
   "سینما": { question:"چه ژانر فیلمی حال میده؟", type:"options", options:["کمدی","عاشقانه","ترسناک","اکشن و هیجانی","هرچی تو انتخاب کن"] },
-  "پیاده‌روی و پارک": { question:"کدوم پارک بریم؟", type:"options", options:["پارک ملت","پارک لاله","نزدیک‌ترین پارک به خونه‌مون"] },
-  "جایی که خودت انتخاب کن": { question:"پس کجا رو مدنظر داری؟", type:"text" }
+  "پیاده‌روی و پارک": { question:"کدوم پارک بریم؟", type:"options", options:["پارک ملت","پارک لاله","نزدیک‌ترین پارک به خونه‌مون"] }
 };
- 
+// وقتی مکان دستی تایپ بشه (یا هر مورد دیگه‌ای که تو لیست بالا نیست)، همین سؤال پیش‌فرض پرسیده میشه
+const DEFAULT_STEP3 = { question:"چی بخوریم؟", type:"options", options:["فست فود","غذای ایرانی","ایتالیایی","غذای دریایی","هرچی تو بخوای"] };
+const CUSTOM_WHERE_OPTION = "جایی که خودت انتخاب کن";
+
 let answers = { dateText:"", where:"", extraLabel:"", extraAnswer:"" };
 let jSel = null; // {y,m,d}
 const app = document.getElementById('app');
- 
+
 function petals(step){
   let html = '<div class="petals">';
   for(let i=0;i<4;i++){ html += `<div class="petal ${i<step?'on':''}"></div>`; }
   html += '</div>';
   return html;
 }
- 
+
 /* ---------- مرحله ۰: بریم دیت؟ ---------- */
 function renderAsk(){
   app.innerHTML = `
@@ -240,7 +242,7 @@ function renderAsk(){
     </div>
   `;
 }
- 
+
 function renderNoEscape(){
   app.innerHTML = `
     ${petals(0)}
@@ -252,12 +254,12 @@ function renderNoEscape(){
     </div>
   `;
 }
- 
+
 /* ---------- مرحله ۱: تاریخ شمسی + ساعت ---------- */
 function renderDateStep(){
   if(!jSel) jSel = getCurrentJalaliYMD();
   const years = [jSel.y, jSel.y+1, jSel.y+2];
- 
+
   app.innerHTML = `
     ${petals(1)}
     <div class="eyebrow">مرحله ۱ از ۳</div>
@@ -278,16 +280,16 @@ function renderDateStep(){
       <button class="opt primary" onclick="submitDateStep()">بعدی</button>
     </div>
   `;
- 
+
   document.getElementById('selYear').value = jSel.y;
   document.getElementById('selMonth').value = jSel.m;
   fillDayOptions();
   document.getElementById('selDay').value = jSel.d;
- 
+
   document.getElementById('selYear').addEventListener('change', fillDayOptions);
   document.getElementById('selMonth').addEventListener('change', fillDayOptions);
 }
- 
+
 function fillDayOptions(){
   const y = parseInt(document.getElementById('selYear').value, 10);
   const m = parseInt(document.getElementById('selMonth').value, 10);
@@ -299,7 +301,7 @@ function fillDayOptions(){
   daySel.innerHTML = opts;
   daySel.value = Math.min(prevVal, dayCount);
 }
- 
+
 function submitDateStep(){
   const y = document.getElementById('selYear').value;
   const m = parseInt(document.getElementById('selMonth').value, 10);
@@ -308,7 +310,7 @@ function submitDateStep(){
   answers.dateText = `${toFa(d)} ${JALALI_MONTHS[m-1]} ${toFa(y)} - ساعت ${toFa(t)}`;
   renderWhere();
 }
- 
+
 /* ---------- مرحله ۲: کجا ---------- */
 function renderWhere(){
   app.innerHTML = `
@@ -321,20 +323,42 @@ function renderWhere(){
   `;
 }
 function submitWhere(v){
+  if(v === CUSTOM_WHERE_OPTION){
+    renderWhereCustomText();
+    return;
+  }
   answers.where = v;
   renderStep3();
 }
- 
+
+function renderWhereCustomText(){
+  app.innerHTML = `
+    ${petals(2)}
+    <div class="eyebrow">مرحله ۲ از ۳</div>
+    <h1>کجا رو مدنظر داری؟</h1>
+    <input type="text" id="whereTextInput" placeholder="بنویس...">
+    <div class="options">
+      <button class="opt primary" onclick="submitWhereCustomText()">بعدی</button>
+    </div>
+  `;
+}
+function submitWhereCustomText(){
+  const v = document.getElementById('whereTextInput').value.trim();
+  if(!v){ alert('یه چیزی بنویس'); return; }
+  answers.where = v;
+  renderStep3();
+}
+
 /* ---------- مرحله ۳: بر اساس انتخاب مرحله ۲ ---------- */
 function renderStep3(){
-  const cfg = STEP3_CONFIG[answers.where] || { question:"یه نکته‌ی دیگه بگو", type:"text" };
+  const cfg = STEP3_CONFIG[answers.where] || DEFAULT_STEP3;
   answers.extraLabel = cfg.question;
- 
+
   if(cfg.type === 'text'){
     renderStep3Text(cfg.question);
     return;
   }
- 
+
   const opts = [...cfg.options, FREE_TEXT_OPTION];
   app.innerHTML = `
     ${petals(3)}
@@ -345,7 +369,7 @@ function renderStep3(){
     </div>
   `;
 }
- 
+
 function submitStep3(v){
   if(v === FREE_TEXT_OPTION){
     renderStep3Text(answers.extraLabel);
@@ -354,7 +378,7 @@ function submitStep3(v){
   answers.extraAnswer = v;
   saveAndFinish();
 }
- 
+
 function renderStep3Text(question){
   app.innerHTML = `
     ${petals(3)}
@@ -372,32 +396,35 @@ function submitStep3Text(){
   answers.extraAnswer = v;
   saveAndFinish();
 }
- 
+
 /* ---------- ارسال ایمیل + پیام پایانی ---------- */
 function timeout(ms){ return new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms)); }
- 
+
 function saveAndFinish(){
   app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>یه لحظه...</h1>`;
   const finish = ()=> renderThanks();
- 
+
   if(!emailReady){
     console.warn('EmailJS not ready, skipping email send.');
     finish();
     return;
   }
- 
-  const sendPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+
+  const payload = {
     date: answers.dateText,
     where: answers.where,
     extra_label: answers.extraLabel,
     extra_answer: answers.extraAnswer
-  });
- 
+  };
+  console.log('در حال ارسال این اطلاعات به ایمیل:', payload);
+
+  const sendPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload);
+
   Promise.race([sendPromise, timeout(8000)])
     .then(()=> finish())
     .catch(err=>{ console.error('Email send failed or timed out:', err); finish(); });
 }
- 
+
 function renderThanks(){
   const lines = [
     "وایییی خیلی خوشحالم کردی! 🥰",
@@ -411,7 +438,7 @@ function renderThanks(){
     ${lines.map((l,i)=>`<p class="love-line" style="animation-delay:${i*0.35}s">${l}</p>`).join('')}
   `;
 }
- 
+
 try{
   renderAsk();
 }catch(e){
@@ -419,7 +446,7 @@ try{
   app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن. اگه ادامه داشت، کنسول مرورگر (F12) رو چک کن.</p>`;
 }
 </script>
- 
+
 <style>
 @keyframes fadeInLine{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 </style>
