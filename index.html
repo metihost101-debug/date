@@ -18,13 +18,17 @@
     --cream-200:#ecdfce;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;height:100%;}
   body{
     min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
     background:
-      radial-gradient(1200px 700px at 15% 10%, rgba(216,171,92,.10), transparent 60%),
-      radial-gradient(1000px 700px at 85% 90%, rgba(211,102,127,.14), transparent 60%),
-      linear-gradient(160deg, var(--plum-950), var(--plum-900) 55%, var(--plum-800));
+      radial-gradient(1200px 700px at 15% 10%, rgba(216,171,92,.14), transparent 60%),
+      radial-gradient(1000px 700px at 85% 90%, rgba(211,102,127,.18), transparent 60%),
+      linear-gradient(160deg, var(--plum-950), var(--plum-900) 45%, var(--plum-800), var(--plum-900));
+    background-size:100% 100%, 100% 100%, 300% 300%;
+    animation: bgShift 18s ease-in-out infinite alternate;
     font-family:'Vazirmatn', sans-serif;
     color:var(--cream-100);
     display:flex;
@@ -32,6 +36,26 @@
     justify-content:center;
     padding:24px;
   }
+  @keyframes bgShift{
+    0%{ background-position:0% 0%, 0% 0%, 0% 50%; }
+    100%{ background-position:0% 0%, 0% 0%, 100% 50%; }
+  }
+ 
+  /* شناور‌های پس‌زمینه */
+  .floaties{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  .floaty{
+    position:absolute; bottom:-10%; font-size:20px; opacity:0;
+    animation-name: floatUp; animation-timing-function: ease-in; animation-iteration-count: infinite;
+    filter:drop-shadow(0 0 6px rgba(211,102,127,.35));
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10%{ opacity:.85; }
+    50%{ transform:translateY(-55vh) translateX(12px) rotate(12deg); }
+    90%{ opacity:.6; }
+    100%{ transform:translateY(-110vh) translateX(-14px) rotate(-8deg); opacity:0; }
+  }
+ 
   .card{
     width:100%;
     max-width:480px;
@@ -43,28 +67,17 @@
     box-shadow:0 30px 60px -20px rgba(0,0,0,.5);
     text-align:center;
     position:relative;
+    z-index:1;
     overflow:hidden;
   }
-  .petals{
-    display:flex; justify-content:center; gap:8px; margin-bottom:22px;
-  }
-  .petal{
-    width:10px;height:10px;border-radius:50%;
-    background:rgba(246,236,225,.15);
-    transition:all .4s ease;
-  }
+  .petals{ display:flex; justify-content:center; gap:8px; margin-bottom:22px; }
+  .petal{ width:10px;height:10px;border-radius:50%; background:rgba(246,236,225,.15); transition:all .4s ease; }
   .petal.on{background:var(--rose-500); box-shadow:0 0 12px rgba(211,102,127,.7); transform:scale(1.3);}
-
-  .eyebrow{
-    font-size:13px; letter-spacing:.14em; color:var(--gold-400);
-    font-weight:600; margin-bottom:10px;
-  }
-  h1{
-    font-size:26px; font-weight:800; margin:0 0 14px; line-height:1.5;
-    color:var(--cream-100);
-  }
-  p.sub{ color:var(--cream-200); opacity:.8; font-size:14.5px; margin:0 0 28px; line-height:1.9;}
-
+ 
+  .eyebrow{ font-size:13px; letter-spacing:.14em; color:var(--gold-400); font-weight:600; margin-bottom:10px; }
+  h1{ font-size:26px; font-weight:800; margin:0 0 14px; line-height:1.5; color:var(--cream-100); }
+  p.sub{ color:var(--cream-200); opacity:.8; font-size:14.5px; margin:0 0 22px; line-height:1.9;}
+ 
   .options{ display:flex; flex-direction:column; gap:12px; }
   .options.row{ flex-direction:row; flex-wrap:wrap; justify-content:center; }
   button.opt{
@@ -80,72 +93,139 @@
     transition:.2s ease;
   }
   button.opt:hover{ background:rgba(211,102,127,.18); border-color:var(--rose-500); transform:translateY(-2px); }
-  button.opt.primary{
-    background:linear-gradient(135deg, var(--rose-500), #b84a63);
-    border:none;
-  }
+  button.opt.primary{ background:linear-gradient(135deg, var(--rose-500), #b84a63); border:none; }
   button.opt.ghost{ opacity:.7; }
-
-  input[type=date]{
+ 
+  .row-fields{ display:flex; gap:10px; margin-bottom:16px; }
+  select, input[type=time], input[type=text]{
     width:100%;
-    padding:14px 16px;
+    padding:12px 10px;
     border-radius:14px;
     border:1px solid rgba(233,180,192,.3);
     background:rgba(255,255,255,.04);
     color:var(--cream-100);
     font-family:inherit;
-    font-size:15px;
-    margin-bottom:16px;
+    font-size:14.5px;
+    text-align:center;
   }
-  input::-webkit-calendar-picker-indicator{ filter:invert(1); }
-
-  .heart{
-    font-size:42px; margin-bottom:6px;
-    animation:pulse 1.6s ease-in-out infinite;
-  }
+  input[type=text]{ margin-bottom:16px; text-align:right; padding-right:14px; }
+  label.field-label{ display:block; font-size:12px; color:var(--cream-200); opacity:.7; margin:14px 0 8px; }
+  select option{ color:#222; }
+ 
+  .heart{ font-size:42px; margin-bottom:6px; animation:pulse 1.6s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
+ 
+  .love-line{
+    font-size:15px; line-height:2; opacity:0; margin:0 0 4px;
+    animation: fadeInLine .6s ease forwards;
+  }
 </style>
 </head>
 <body>
-
+ 
+<div class="floaties" id="floaties"></div>
 <div class="card" id="app"></div>
-
+ 
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
+ 
 <script>
 /* =========================================================
    تنظیمات EmailJS — این ۳ مقدار رو از پنل EmailJS خودت بردار
-   راهنما پایین توضیحات چت هست
 ========================================================= */
 const EMAILJS_PUBLIC_KEY  = "4sBQXocECkOiVRHc3";
 const EMAILJS_SERVICE_ID  = "service_rc1nf9s";
 const EMAILJS_TEMPLATE_ID = "template_6sijb8t";
-
+ 
 let emailReady = false;
 try{
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   emailReady = true;
-}catch(e){
-  console.error('EmailJS init failed:', e);
-}
-
+}catch(e){ console.error('EmailJS init failed:', e); }
+ 
 /* =========================================================
-   داده‌ی سوالات — می‌تونی گزینه‌ها رو عوض کنی
+   پس‌زمینه‌ی شناور
+========================================================= */
+(function initFloaties(){
+  const wrap = document.getElementById('floaties');
+  const glyphs = ['❤','💫','✨','🌸','💖'];
+  const count = 16;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.className = 'floaty';
+    s.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+    const left = Math.random()*100;
+    const duration = 9 + Math.random()*10;
+    const delay = Math.random()*12;
+    const size = 14 + Math.random()*16;
+    s.style.left = left + '%';
+    s.style.fontSize = size + 'px';
+    s.style.animationDuration = duration + 's';
+    s.style.animationDelay = delay + 's';
+    wrap.appendChild(s);
+  }
+})();
+ 
+/* =========================================================
+   کمکی: تبدیل عدد به رقم فارسی
+========================================================= */
+function toFa(n){
+  const fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(n).replace(/[0-9]/g, d => fa[d]);
+}
+ 
+/* =========================================================
+   تقویم شمسی (فقط برای ساخت گزینه‌های سال/ماه/روز)
+========================================================= */
+const JALALI_MONTHS = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+ 
+function isLeapJalali(jy){
+  const r = ((jy % 33) + 33) % 33;
+  return [1,5,9,13,17,22,26,30].includes(r);
+}
+function daysInJalaliMonth(jy, jm){
+  if(jm <= 6) return 31;
+  if(jm <= 11) return 30;
+  return isLeapJalali(jy) ? 30 : 29;
+}
+function getCurrentJalaliYMD(){
+  try{
+    const parts = new Intl.DateTimeFormat('en-US-u-ca-persian', {year:'numeric', month:'numeric', day:'numeric'}).formatToParts(new Date());
+    const y = parseInt(parts.find(p=>p.type==='year').value, 10);
+    const m = parseInt(parts.find(p=>p.type==='month').value, 10);
+    const d = parseInt(parts.find(p=>p.type==='day').value, 10);
+    return {y, m, d};
+  }catch(e){
+    console.warn('Persian calendar Intl not supported, falling back.', e);
+    return {y:1404, m:1, d:1};
+  }
+}
+ 
+/* =========================================================
+   داده‌ی سوالات
 ========================================================= */
 const WHERE_OPTIONS = ["رستوران دنج", "کافه", "سینما", "پیاده‌روی و پارک", "جایی که خودت انتخاب کن"];
-const FOOD_OPTIONS  = ["فست فود", "غذای ایرانی", "ایتالیایی", "فقط یه قهوه و دسر", "هرچی تو بخوای"];
-
-let answers = { date:"", where:"", food:"" };
+const FREE_TEXT_OPTION = "یه چیز دیگه (خودم می‌نویسم)";
+ 
+const STEP3_CONFIG = {
+  "رستوران دنج": { question:"چی بخوریم؟", type:"options", options:["فست فود","غذای ایرانی","ایتالیایی","غذای دریایی","هرچی تو بخوای"] },
+  "کافه": { question:"چی سفارش بدم برات؟", type:"options", options:["قهوه","چای و دمنوش","یه دسر شیرین","نوشیدنی سرد","هرچی خودت دوست داری"] },
+  "سینما": { question:"چه ژانر فیلمی حال میده؟", type:"options", options:["کمدی","عاشقانه","ترسناک","اکشن و هیجانی","هرچی تو انتخاب کن"] },
+  "پیاده‌روی و پارک": { question:"کدوم پارک بریم؟", type:"options", options:["پارک ملت","پارک لاله","نزدیک‌ترین پارک به خونه‌مون"] },
+  "جایی که خودت انتخاب کن": { question:"پس کجا رو مدنظر داری؟", type:"text" }
+};
+ 
+let answers = { dateText:"", where:"", extraLabel:"", extraAnswer:"" };
+let jSel = null; // {y,m,d}
 const app = document.getElementById('app');
-
+ 
 function petals(step){
   let html = '<div class="petals">';
   for(let i=0;i<4;i++){ html += `<div class="petal ${i<step?'on':''}"></div>`; }
   html += '</div>';
   return html;
 }
-
+ 
 /* ---------- مرحله ۰: بریم دیت؟ ---------- */
 function renderAsk(){
   app.innerHTML = `
@@ -155,44 +235,80 @@ function renderAsk(){
     <h1>بریم یه دیت؟</h1>
     <p class="sub">فقط چندتا سوال کوچیک مونده تا برنامه‌مون آماده بشه</p>
     <div class="options row">
-      <button class="opt primary" onclick="renderDate()">اره بریم 🤍</button>
-      <button class="opt ghost" onclick="renderNo()">فعلا نه</button>
+      <button class="opt primary" onclick="renderDateStep()">اره بریم 🤍</button>
+      <button class="opt ghost" onclick="renderNoEscape()">فعلا نه</button>
     </div>
   `;
 }
-
-function renderNo(){
+ 
+function renderNoEscape(){
   app.innerHTML = `
     ${petals(0)}
-    <div class="heart">🥲</div>
-    <h1>باشه، هروقت خواستی بگو</h1>
-    <p class="sub">همیشه یه در برات بازه</p>
+    <div class="heart">😏</div>
+    <h1>راه دیگه‌ای نداری!</h1>
+    <p class="sub">لطفاً یه تاریخ خوب برای دیتمون تنظیم کن 😄</p>
     <div class="options">
-      <button class="opt" onclick="renderAsk()">بازم فکر کن</button>
+      <button class="opt primary" onclick="renderDateStep()">باشه تسلیمم 🤍</button>
     </div>
   `;
 }
-
-/* ---------- مرحله ۱: تاریخ ---------- */
-function renderDate(){
+ 
+/* ---------- مرحله ۱: تاریخ شمسی + ساعت ---------- */
+function renderDateStep(){
+  if(!jSel) jSel = getCurrentJalaliYMD();
+  const years = [jSel.y, jSel.y+1, jSel.y+2];
+ 
   app.innerHTML = `
     ${petals(1)}
     <div class="eyebrow">مرحله ۱ از ۳</div>
     <h1>کی برات خوبه؟</h1>
-    <p class="sub">یه تاریخ انتخاب کن</p>
-    <input type="date" id="dateInput">
-    <div class="options">
-      <button class="opt primary" onclick="submitDate()">بعدی</button>
+    <p class="sub">تاریخ و ساعت رو انتخاب کن</p>
+    <div class="row-fields">
+      <select id="selDay"></select>
+      <select id="selMonth">
+        ${JALALI_MONTHS.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
+      </select>
+      <select id="selYear">
+        ${years.map(y=>`<option value="${y}">${toFa(y)}</option>`).join('')}
+      </select>
+    </div>
+    <label class="field-label">ساعت</label>
+    <input type="time" id="selTime" value="20:00">
+    <div class="options" style="margin-top:18px;">
+      <button class="opt primary" onclick="submitDateStep()">بعدی</button>
     </div>
   `;
+ 
+  document.getElementById('selYear').value = jSel.y;
+  document.getElementById('selMonth').value = jSel.m;
+  fillDayOptions();
+  document.getElementById('selDay').value = jSel.d;
+ 
+  document.getElementById('selYear').addEventListener('change', fillDayOptions);
+  document.getElementById('selMonth').addEventListener('change', fillDayOptions);
 }
-function submitDate(){
-  const v = document.getElementById('dateInput').value;
-  if(!v){ alert('یه تاریخ انتخاب کن'); return; }
-  answers.date = v;
+ 
+function fillDayOptions(){
+  const y = parseInt(document.getElementById('selYear').value, 10);
+  const m = parseInt(document.getElementById('selMonth').value, 10);
+  const dayCount = daysInJalaliMonth(y, m);
+  const daySel = document.getElementById('selDay');
+  const prevVal = parseInt(daySel.value, 10) || 1;
+  let opts = '';
+  for(let d=1; d<=dayCount; d++){ opts += `<option value="${d}">${toFa(d)}</option>`; }
+  daySel.innerHTML = opts;
+  daySel.value = Math.min(prevVal, dayCount);
+}
+ 
+function submitDateStep(){
+  const y = document.getElementById('selYear').value;
+  const m = parseInt(document.getElementById('selMonth').value, 10);
+  const d = document.getElementById('selDay').value;
+  const t = document.getElementById('selTime').value || "20:00";
+  answers.dateText = `${toFa(d)} ${JALALI_MONTHS[m-1]} ${toFa(y)} - ساعت ${toFa(t)}`;
   renderWhere();
 }
-
+ 
 /* ---------- مرحله ۲: کجا ---------- */
 function renderWhere(){
   app.innerHTML = `
@@ -204,63 +320,98 @@ function renderWhere(){
     </div>
   `;
 }
-function submitWhere(v){ answers.where = v; renderFood(); }
-
-/* ---------- مرحله ۳: چی بخوریم ---------- */
-function renderFood(){
+function submitWhere(v){
+  answers.where = v;
+  renderStep3();
+}
+ 
+/* ---------- مرحله ۳: بر اساس انتخاب مرحله ۲ ---------- */
+function renderStep3(){
+  const cfg = STEP3_CONFIG[answers.where] || { question:"یه نکته‌ی دیگه بگو", type:"text" };
+  answers.extraLabel = cfg.question;
+ 
+  if(cfg.type === 'text'){
+    renderStep3Text(cfg.question);
+    return;
+  }
+ 
+  const opts = [...cfg.options, FREE_TEXT_OPTION];
   app.innerHTML = `
     ${petals(3)}
     <div class="eyebrow">مرحله ۳ از ۳</div>
-    <h1>چی بخوریم؟</h1>
+    <h1>${cfg.question}</h1>
     <div class="options">
-      ${FOOD_OPTIONS.map(o=>`<button class="opt" onclick="submitFood('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
+      ${opts.map(o=>`<button class="opt" onclick="submitStep3('${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
     </div>
   `;
 }
-function submitFood(v){
-  answers.food = v;
+ 
+function submitStep3(v){
+  if(v === FREE_TEXT_OPTION){
+    renderStep3Text(answers.extraLabel);
+    return;
+  }
+  answers.extraAnswer = v;
   saveAndFinish();
 }
-
-/* ---------- ارسال ایمیل + پیام پایانی ---------- */
-function timeout(ms){
-  return new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms));
+ 
+function renderStep3Text(question){
+  app.innerHTML = `
+    ${petals(3)}
+    <div class="eyebrow">مرحله ۳ از ۳</div>
+    <h1>${question}</h1>
+    <input type="text" id="step3TextInput" placeholder="بنویس...">
+    <div class="options">
+      <button class="opt primary" onclick="submitStep3Text()">ثبت</button>
+    </div>
+  `;
 }
-
+function submitStep3Text(){
+  const v = document.getElementById('step3TextInput').value.trim();
+  if(!v){ alert('یه چیزی بنویس'); return; }
+  answers.extraAnswer = v;
+  saveAndFinish();
+}
+ 
+/* ---------- ارسال ایمیل + پیام پایانی ---------- */
+function timeout(ms){ return new Promise((_, reject)=> setTimeout(()=> reject(new Error('timeout')), ms)); }
+ 
 function saveAndFinish(){
   app.innerHTML = `${petals(4)}<div class="heart">💫</div><h1>یه لحظه...</h1>`;
-
   const finish = ()=> renderThanks();
-
+ 
   if(!emailReady){
-    // اگه ایمیل وصل نبود، به‌هرحال تجربه رو برای طرف مقابل خراب نکن
     console.warn('EmailJS not ready, skipping email send.');
     finish();
     return;
   }
-
+ 
   const sendPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-    date:  answers.date,
+    date: answers.dateText,
     where: answers.where,
-    food:  answers.food
+    extra_label: answers.extraLabel,
+    extra_answer: answers.extraAnswer
   });
-
-  // چه ایمیل بره چه نره، تجربه‌ی طرف مقابل همیشه با یه پیام قشنگ تموم میشه
-  // (خطای فنی فقط تو کنسول لاگ میشه، نه رو صفحه)
+ 
   Promise.race([sendPromise, timeout(8000)])
     .then(()=> finish())
     .catch(err=>{ console.error('Email send failed or timed out:', err); finish(); });
 }
-
+ 
 function renderThanks(){
+  const lines = [
+    "وایییی خیلی خوشحالم کردی! 🥰",
+    "از همین الان دارم لحظه‌شماری می‌کنم برای اون روز 💫",
+    "قول میدم حسابی خوش بگذره، آماده باش 😎",
+    "دوستت دارم، می‌بینمت به‌زودی ❤️"
+  ];
   app.innerHTML = `
     ${petals(4)}
     <div class="heart">🥰</div>
-    <h1>وایییی خیلی خوشحالم کردی!</h1>
-    <p class="sub">قرارمون افتاد. تا اون روز لحظه‌شماری می‌کنم ❤️</p>
+    ${lines.map((l,i)=>`<p class="love-line" style="animation-delay:${i*0.35}s">${l}</p>`).join('')}
   `;
 }
-
+ 
 try{
   renderAsk();
 }catch(e){
@@ -268,5 +419,9 @@ try{
   app.innerHTML = `<h1>مشکلی پیش اومد 😕</h1><p class="sub">صفحه رو رفرش کن. اگه ادامه داشت، کنسول مرورگر (F12) رو چک کن.</p>`;
 }
 </script>
+ 
+<style>
+@keyframes fadeInLine{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+</style>
 </body>
 </html>
